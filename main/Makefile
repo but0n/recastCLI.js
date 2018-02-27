@@ -1,5 +1,7 @@
 include ../make.config
 
+LIBDIR+=-I../recast/
+
 all:$(TARG)
 	@$(AR) cr main.a $^
 
