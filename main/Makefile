@@ -7,4 +7,4 @@ all:$(TARG)
 
 .PHONY: clean
 clean:
-	rm -rf *.o *.a
+	$(RM) -r *.o *.a

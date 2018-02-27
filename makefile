@@ -1,17 +1,16 @@
 include make.config
-all:main
+all:recast main
 	@echo "Done"
-	$(CC) $(CFLAGS) recast/recast.a main/main.a -o $(TARGET)
-	# ./$(TARGET)
+	$(CXX) $(CPPFLAGS) recast/recast.a main/main.a -o $(TARGET)
 
 
 .PHONY: clean recast main
 
 recast:
-	@echo "==> Make\t$@" && $(MAKE) -C $@
+	@echo "===> Building $@.a:" && $(MAKE) -C $@
 
-main:recast
-	@echo "==> Make\t$@" && $(MAKE) -C $@
+main:
+	@echo "===> Building $@.a:" && $(MAKE) -C $@
 
 clean:
 	$(RM) $(TARGET)

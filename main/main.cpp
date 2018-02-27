@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "Recast.h"
 
-static rcConfig m_cfg;
-
 int main(int argc, char const *argv[]) {
     //	handle arguments
     if (argc == 1) {
