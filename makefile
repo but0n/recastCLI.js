@@ -8,10 +8,10 @@ all:main
 .PHONY: clean recast main
 
 recast:
-	@echo "Make $@" && $(MAKE) -C $@
+	@echo "==> Make\t$@" && $(MAKE) -C $@
 
 main:recast
-	@echo "Make $@" && $(MAKE) -C $@
+	@echo "==> Make\t$@" && $(MAKE) -C $@
 
 clean:
 	rm $(TARGET)
