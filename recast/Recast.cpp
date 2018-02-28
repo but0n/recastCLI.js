@@ -69,6 +69,8 @@ void rcContext::log(const rcLogCategory category, const char* format, ...)
 	}
 	va_end(ap);
 	doLog(category, msg, len);
+	// customed print
+	printf("%s\n", msg);
 }
 
 rcHeightfield* rcAllocHeightfield()
