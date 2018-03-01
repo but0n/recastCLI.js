@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
 //
 // This software is provided 'as-is', without any express or implied
@@ -118,12 +118,12 @@ static void subdivide(BoundsItem* items, int nitems, int imin, int imax, int tri
 		if (axis == 0)
 		{
 			// Sort along x-axis
-			qsort(items+imin, inum, sizeof(BoundsItem), compareItemX);
+			qsort(items+imin, static_cast<size_t>(inum), sizeof(BoundsItem), compareItemX);
 		}
 		else if (axis == 1)
 		{
 			// Sort along y-axis
-			qsort(items+imin, inum, sizeof(BoundsItem), compareItemY);
+			qsort(items+imin, static_cast<size_t>(inum), sizeof(BoundsItem), compareItemY);
 		}
 		
 		int isplit = imin+inum/2;
