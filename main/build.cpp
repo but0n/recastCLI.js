@@ -44,7 +44,8 @@ int m_partitionType;
 
 rcContourSet *m_cset;
 
-rcPolyMesh *m_pmesh;	// Navigation mesh 数据
+rcPolyMesh *m_pmesh;		// Navigation mesh 数据
+rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
 int build()
 {
@@ -349,6 +350,39 @@ int build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not triangulate contours.");
 		return false;
 	}
+
+	//
+	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
+	// 第七步: 创建细节网格, 生成高度细节
+	// 在这最后的阶段，凸多边形网格会被Delaunay三角化算法三角化，可以增加高度的细节。
+	//
+
+	m_dmesh = rcAllocPolyMeshDetail();
+	if (!m_dmesh)
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmdtl'.");
+		return false;
+	}
+
+	if (!rcBuildPolyMeshDetail(m_ctx, *m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh))
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build detail mesh.");
+		return false;
+	}
+
+	if (!m_keepInterResults)
+	{
+		rcFreeCompactHeightfield(m_chf);
+		m_chf = 0;
+		rcFreeContourSet(m_cset);
+		m_cset = 0;
+	}
+
+	// 现在 Navmesh 数据就可以使用了, 你可以通过 m_pmesh 来access数据
+	// duDebugDrawPolyMesh 和 dtCreateNavMeshData 有access用例
+
+	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
+	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
 	return 0;
 }
