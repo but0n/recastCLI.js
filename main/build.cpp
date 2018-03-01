@@ -31,7 +31,7 @@
 rcConfig m_cfg;
 class rcContext *m_ctx = new rcContext;
 class InputGeom *m_geom = new InputGeom;
-class rcHeightfield *m_solid;
+rcHeightfield *m_solid;
 unsigned char *m_triareas;
 
 bool m_keepInterResults =				true;
@@ -39,10 +39,10 @@ bool m_filterLowHangingObstacles =		true;
 bool m_filterLedgeSpans =				true;
 bool m_filterWalkableLowHeightSpans =	true;
 
+rcCompactHeightfield *m_chf;
+int m_partitionType;
 
-
-	int
-	build()
+int build()
 {
 	if (!m_geom->load(m_ctx, "nav_test.obj")) {
 		return -1;
@@ -196,9 +196,119 @@ bool m_filterWalkableLowHeightSpans =	true;
 	if (m_filterWalkableLowHeightSpans)
 		rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
 
+	//
+	// Step 4. Partition walkable surface to simple regions.
+	// 第四步: 把可行走表面划分为简单区域
+	//
 
+	// Compact the heightfield so that it is faster to handle from now on.
+	// This will result more cache coherent data as well as the neighbours
+	// between walkable cells will be calculated.
+	// 简化高度场
+	m_chf = rcAllocCompactHeightfield();
+	if (!m_chf)
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'chf'.");
+		return false;
+	}
+	// Builds a compact heightfield representing open space, from a heightfield representing solid space.
+	if (!rcBuildCompactHeightfield(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf))
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
+		return false;
+	}
 
+	// 是否保留原数据
+	if (!m_keepInterResults)
+	{
+		rcFreeHeightField(m_solid);
+		m_solid = 0;
+	}
 
+	// Erode the walkable area by agent radius.
+	// 通过 Agent 半径, 收紧可走区域
+	if (!rcErodeWalkableArea(m_ctx, m_cfg.walkableRadius, *m_chf))
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not erode.");
+		return false;
+	}
+
+	// (Optional) Mark areas.
+	// 可选, 标记行走标记
+	const ConvexVolume *vols = m_geom->getConvexVolumes();
+	for (int i = 0; i < m_geom->getConvexVolumeCount(); ++i)
+		rcMarkConvexPolyArea(m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
+
+	// 划分高度场, 这样我们就可以用简单的算法去三角形化可走区域
+	// 有三个选项:
+	//      - Watershed (default)
+	//      - Monotone
+	//      - Layers
+	// 三选一
+
+	// Partition the heightfield so that we can use simple algorithm later to triangulate the walkable areas.
+	// There are 3 martitioning methods, each with some pros and cons:
+	// 1) Watershed partitioning
+	//   - the classic Recast partitioning
+	//   - creates the nicest tessellation
+	//   - usually slowest
+	//   - partitions the heightfield into nice regions without holes or overlaps
+	//   - the are some corner cases where this method creates produces holes and overlaps
+	//      - holes may appear when a small obstacles is close to large open area (triangulation can handle this)
+	//      - overlaps may occur if you have narrow spiral corridors (i.e stairs), this make triangulation to fail
+	//   * generally the best choice if you precompute the nacmesh, use this if you have large open areas
+	// 2) Monotone partioning
+	//   - fastest
+	//   - partitions the heightfield into regions without holes and overlaps (guaranteed)
+	//   - creates long thin polygons, which sometimes causes paths with detours
+	//   * use this if you want fast navmesh generation
+	// 3) Layer partitoining
+	//   - quite fast
+	//   - partitions the heighfield into non-overlapping regions
+	//   - relies on the triangulation code to cope with holes (thus slower than monotone partitioning)
+	//   - produces better triangles than monotone partitioning
+	//   - does not have the corner cases of watershed partitioning
+	//   - can be slow and create a bit ugly tessellation (still better than monotone)
+	//     if you have large open areas with small obstacles (not a problem if you use tiles)
+	//   * good choice to use for tiled navmesh with medium and small sized tiles
+
+	if (m_partitionType == SAMPLE_PARTITION_WATERSHED)
+	{
+		// Prepare for region partitioning, by calculating distance field along the walkable surface.
+		if (!rcBuildDistanceField(m_ctx, *m_chf))
+		{
+			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build distance field.");
+			return false;
+		}
+
+		// Partition the walkable surface into simple regions without holes.
+		if (!rcBuildRegions(m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
+		{
+			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build watershed regions.");
+			return false;
+		}
+	}
+	// 单调分割
+	else if (m_partitionType == SAMPLE_PARTITION_MONOTONE)
+	{
+		// Partition the walkable surface into simple regions without holes.
+		// Monotone partitioning does not need distancefield.
+		// 将可行走表面划分成简单地区, 无孔, 单调划分不需要距离范围
+		if (!rcBuildRegionsMonotone(m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
+		{
+			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build monotone regions.");
+			return false;
+		}
+	}
+	else // SAMPLE_PARTITION_LAYERS
+	{
+		// Partition the walkable surface into simple regions without holes.
+		if (!rcBuildLayerRegions(m_ctx, *m_chf, 0, m_cfg.minRegionArea))
+		{
+			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build layer regions.");
+			return false;
+		}
+	}
 
 	return 0;
 }
