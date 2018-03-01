@@ -42,6 +42,8 @@ bool m_filterWalkableLowHeightSpans =	true;
 rcCompactHeightfield *m_chf;
 int m_partitionType;
 
+rcContourSet *m_cset;
+
 int build()
 {
 	if (!m_geom->load(m_ctx, "nav_test.obj")) {
@@ -308,6 +310,24 @@ int build()
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build layer regions.");
 			return false;
 		}
+	}
+
+	//
+	// Step 5. Trace and simplify region contours.
+	// 第五步: 跟踪并且生成简单轮廓
+	//
+
+	// Create contours.
+	m_cset = rcAllocContourSet();
+	if (!m_cset)
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'cset'.");
+		return false;
+	}
+	if (!rcBuildContours(m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
+		return false;
 	}
 
 	return 0;
