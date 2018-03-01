@@ -44,6 +44,8 @@ int m_partitionType;
 
 rcContourSet *m_cset;
 
+rcPolyMesh *m_pmesh;	// Navigation mesh 数据
+
 int build()
 {
 	if (!m_geom->load(m_ctx, "nav_test.obj")) {
@@ -327,6 +329,24 @@ int build()
 	if (!rcBuildContours(m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
+		return false;
+	}
+
+	//
+	// Step 6. Build polygons mesh from contours.
+	// 第六步: 从轮廓生成凸多边形网格
+	//
+
+	// Build polygon navmesh from the contours.
+	m_pmesh = rcAllocPolyMesh();
+	if (!m_pmesh)
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmesh'.");
+		return false;
+	}
+	if (!rcBuildPolyMesh(m_ctx, *m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
+	{
+		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not triangulate contours.");
 		return false;
 	}
 
