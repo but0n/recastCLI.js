@@ -384,5 +384,42 @@ int build()
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
-	return 0;
+    do {
+        const float cs = m_pmesh->cs;
+        const float ch = m_pmesh->ch;
+        // Vertices
+
+        for (int i = 0; i < m_pmesh->nverts; i++)
+        {
+            float x = m_pmesh->bmin[0] + m_pmesh->verts[i * 3 + 0] * cs;
+            float y = m_pmesh->bmin[1] + m_pmesh->verts[i * 3 + 1] * ch;
+            float z = m_pmesh->bmin[2] + m_pmesh->verts[i * 3 + 2] * cs;
+            printf("v %f %f %f\r\n", x, y, z);
+        }
+        printf("\r\n");
+        // Polygon
+        for (int i = 0; i < m_pmesh->npolys; i++)
+        {
+            const unsigned short *poly = &m_pmesh->polys[i * 2 * m_pmesh->nvp];
+            printf("f ");
+            for (int v = 0; v < m_pmesh->nvp; v++)
+            {
+                if (poly[v] == RC_MESH_NULL_IDX)
+                {
+                    // 如果当前顶点为空
+                    break;
+                }
+                else
+                {
+                    printf("%d ", poly[v] + 1);
+                }
+            }
+            printf("\r\n");
+        }
+    } while (0);
+
+    float m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
+    printf("\n=== Total: %f\n", m_totalBuildTimeMs);
+
+    return 0;
 }
