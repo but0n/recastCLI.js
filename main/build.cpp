@@ -33,7 +33,13 @@ class rcContext *m_ctx = new rcContext;
 class InputGeom *m_geom = new InputGeom;
 class rcHeightfield *m_solid;
 unsigned char *m_triareas;
-bool m_keepInterResults = true;
+
+bool m_keepInterResults =				true;
+bool m_filterLowHangingObstacles =		true;
+bool m_filterLedgeSpans =				true;
+bool m_filterWalkableLowHeightSpans =	true;
+
+
 
 	int
 	build()
@@ -168,6 +174,31 @@ bool m_keepInterResults = true;
 		delete[] m_triareas;
 		m_triareas = 0;
 	}
+
+	//
+	// Step 3. Filter walkables surfaces.
+	// 第三步: 过滤可走表面
+	//
+
+	// Once all geoemtry is rasterized, we do initial pass of filtering to
+	// remove unwanted overhangs caused by the conservative rasterization
+	// as well as filter spans where the character cannot possibly stand.
+	// 一旦完成所有几何面的光栅化, 我们移除掉因“保守光栅化”引起的的无用的悬崖, 以及角色不可能站立的位置
+
+	// 在walkableClimp范围内, 允许从低一级span过渡到当前span, 比如楼梯
+	if (m_filterLowHangingObstacles)
+		rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
+	// 过滤掉峭壁, 将峭壁两侧的span设置为不可走
+	// 判断高度差是否大于玩家攀爬高度
+	if (m_filterLedgeSpans)
+		rcFilterLedgeSpans(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
+	// 过滤掉上下间隔太小的span
+	if (m_filterWalkableLowHeightSpans)
+		rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
+
+
+
+
 
 	return 0;
 }
