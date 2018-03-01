@@ -5,29 +5,6 @@
 #include "InputGeom.h"
 #include "MeshLoaderObj.h"
 
-// Rasterization
-#define CFG_CELL_SIZE   0.30
-#define CFG_CELL_HEIGHT 0.20
-
-// Agent
-#define CFG_AGENT_HEIGHT    2.0
-#define CFG_AGENT_RADIUS    0.6
-#define CFG_AGENT_MAX_CLIMP 0.9
-#define CFG_AGENT_MAX_SLOPE 45
-
-// Region
-#define CFG_REGION_MIN_SIZE     8
-#define CFG_REGION_MERGE_SIZE   20
-
-// Polygonization
-#define CFG_EDGE_MAX_LEN    12
-#define CFG_EDGE_MAX_ERROR  1.3
-#define CFG_VERTS_PER_POLY  6
-
-// Detail Mesh
-#define CFG_DETAIL_SAMPLE_DIST      6
-#define CFG_DETAIL_SAMPLE_MAX_ERROR 1
-
 rcConfig m_cfg;
 class rcContext *m_ctx = new rcContext;
 class InputGeom *m_geom = new InputGeom;
@@ -47,9 +24,58 @@ rcContourSet *m_cset;
 rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
-int build()
+int build(
+    const char *filename,
+    float 	cellSize,
+    float 	cellHeight,
+    float 	agentHeight,
+    float 	agentRadius,
+    float 	agentMaxClimp,
+    int 	agentMaxSlope,
+	int 	regionMinSize,
+	int 	regionMergeSize,
+	int 	edgeMaxLen,
+	float 	edgeMaxError,
+	int 	vertsPerPoly,
+	int 	detailSampleDist,
+	int 	detailSampleMaxError
+)
 {
-	if (!m_geom->load(m_ctx, "nav_test.obj")) {
+
+	if(cellSize == 0)
+		cellSize = CFG_CELL_SIZE;
+	if(cellHeight == 0)
+		cellHeight = CFG_CELL_HEIGHT;
+
+	if(agentHeight == 0)
+		agentHeight = CFG_AGENT_HEIGHT;
+	if(agentRadius == 0)
+		agentRadius = CFG_AGENT_RADIUS;
+	if(agentMaxClimp == 0)
+		agentMaxClimp = CFG_AGENT_MAX_CLIMP;
+	if(agentMaxSlope == 0)
+		agentMaxSlope = CFG_AGENT_MAX_SLOPE;
+
+	if(regionMinSize == 0)
+		regionMinSize = CFG_REGION_MIN_SIZE;
+	if(regionMergeSize == 0)
+		regionMergeSize = CFG_REGION_MERGE_SIZE;
+
+	if(edgeMaxLen == 0)
+		edgeMaxLen = CFG_EDGE_MAX_LEN;
+	if(edgeMaxError == 0)
+		edgeMaxError = CFG_EDGE_MAX_ERROR;
+	if(vertsPerPoly == 0)
+		vertsPerPoly = CFG_VERTS_PER_POLY;
+
+	if(detailSampleDist == 0)
+		detailSampleDist = CFG_DETAIL_SAMPLE_DIST;
+	if(detailSampleMaxError == 0)
+		detailSampleMaxError = CFG_DETAIL_SAMPLE_MAX_ERROR;
+
+
+    if (!m_geom->load(m_ctx, filename)) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot load file: %s", filename);
 		return -1;
 	}
 	// 模型包围盒

@@ -2,7 +2,6 @@ include make.config
 all:recast main
 	@echo "Done"
 	$(CXX) $(CPPFLAGS) recast/recast.a main/main.a -o $(TARGET)
-	./$(TARGET)
 
 
 .PHONY: clean recast main
