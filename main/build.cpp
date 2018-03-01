@@ -6,26 +6,26 @@
 #include "MeshLoaderObj.h"
 
 // Rasterization
-#define CFG_CELL_SIZE 0.30
+#define CFG_CELL_SIZE   0.30
 #define CFG_CELL_HEIGHT 0.20
 
 // Agent
-#define CFG_AGENT_HEIGHT 2.0
-#define CFG_AGENT_RADIUS 0.6
+#define CFG_AGENT_HEIGHT    2.0
+#define CFG_AGENT_RADIUS    0.6
 #define CFG_AGENT_MAX_CLIMP 0.9
 #define CFG_AGENT_MAX_SLOPE 45
 
 // Region
-#define CFG_REGION_MIN_SIZE 8
-#define CFG_REGION_MERGE_SIZE 20
+#define CFG_REGION_MIN_SIZE     8
+#define CFG_REGION_MERGE_SIZE   20
 
 // Polygonization
-#define CFG_EDGE_MAX_LEN 12
-#define CFG_EDGE_MAX_ERROR 1.3
-#define CFG_VERTS_PER_POLY 6
+#define CFG_EDGE_MAX_LEN    12
+#define CFG_EDGE_MAX_ERROR  1.3
+#define CFG_VERTS_PER_POLY  6
 
 // Detail Mesh
-#define CFG_DETAIL_SAMPLE_DIST 6
+#define CFG_DETAIL_SAMPLE_DIST      6
 #define CFG_DETAIL_SAMPLE_MAX_ERROR 1
 
 rcConfig m_cfg;
@@ -62,10 +62,12 @@ int build()
 	const int *tris = m_geom->getMesh()->getTris();
 	const int ntris = m_geom->getMesh()->getTriCount();
 
-	printf("Verts\t: %d\n", nverts);
+#ifdef DEBUG
+    printf("Verts\t: %d\n", nverts);
 	printf("Tris\t: %d\n", ntris);
 	printf("bmin\t: %f\n", *bmin);
 	printf("bmax\t: %f\n", *bmax);
+#endif
 
 	if (!m_geom->getMesh()) {
 
@@ -121,10 +123,12 @@ int build()
 	// 开始计时
 	m_ctx->startTimer(RC_TIMER_TOTAL);
 
-	// 打 log
+#ifdef DEBUG
+    // 打 log
 	m_ctx->log(RC_LOG_PROGRESS, "Building navigation:");
 	m_ctx->log(RC_LOG_PROGRESS, " - %d x %d cells", m_cfg.width, m_cfg.height);
 	m_ctx->log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nverts / 1000.0f, ntris / 1000.0f);
+#endif
 
 	//
 	// Step 2. Rasterize input polygon soup.
@@ -418,8 +422,10 @@ int build()
         }
     } while (0);
 
+#ifdef DEBUG
     float m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
     printf("\n=== Total: %f\n", m_totalBuildTimeMs);
+#endif
 
     return 0;
 }

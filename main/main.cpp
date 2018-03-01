@@ -19,7 +19,5 @@ int main(int argc, char const *argv[]) {
     //     }
     // }
 
-    printf("Running Success...");
-
     return 0;
 }
