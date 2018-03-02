@@ -26,18 +26,39 @@
 #define CFG_DETAIL_SAMPLE_DIST      6
 #define CFG_DETAIL_SAMPLE_MAX_ERROR 1
 
+///
+/// @brief 三角形化可走区域选项
+///
 enum SamplePartitionType
 {
-    SAMPLE_PARTITION_WATERSHED,
+    SAMPLE_PARTITION_WATERSHED, ///< 默认选项
     SAMPLE_PARTITION_MONOTONE,
     SAMPLE_PARTITION_LAYERS,
 };
 
-extern bool m_keepInterResults;
+extern bool m_keepInterResults; ///< 保留中间结果
 extern bool m_filterLowHangingObstacles;
 extern bool m_filterLedgeSpans;
 extern bool m_filterWalkableLowHeightSpans;
 
+///
+/// @brief 构建 Navigation mesh
+/// @param filename 文件名, 相对路径
+/// @param cellSize 网格长度, 用来体素化
+/// @param cellHeight 网格高度, 体素高度
+/// @param agentHeight 角色高度
+/// @param agentRadius 角色碰撞半径
+/// @param agentMaxClimp 角色最高攀爬高度
+/// @param agentMaxSlope 角色最大坡度
+/// @param regionMinSize 区域最大尺寸
+/// @param regionMergeSize 区域合并尺寸
+/// @param edgeMaxLen 边界最大长度
+/// @param edgeMaxError 边界最多错误数
+/// @param vertsPerPoly 多边形最大顶点数
+/// @param detailSampleDist 细节样本距离
+/// @param detailSampleMaxError 细节样本最大错误
+/// @return int 构建状态
+///
 extern int build(const char *filename, float cellSize, float cellHeight, float agentHeight, float agentRadius, float agentMaxClimp, int agentMaxSlope, int regionMinSize, int regionMergeSize, int edgeMaxLen, float edgeMaxError, int vertsPerPoly, int detailSampleDist, int detailSampleMaxError);
 
 #endif
