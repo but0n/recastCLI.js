@@ -1,4 +1,5 @@
 # RecastCLI
+![](https://user-images.githubusercontent.com/7625588/36931426-d560d6aa-1eef-11e8-96a2-14812f7994a3.png)
 
 A command line tools to build navigation mesh for game, which means you can automatically generate navigation mesh on server or localhost.
 
@@ -33,8 +34,6 @@ c.build("nav_test.obj");
 ```shell
 $ ./RecastCLI nav_test.obj 0 0 0 0 0 0 0 0 0 0 0 0 0 > navmesh.obj
 ```
-
-![](https://user-images.githubusercontent.com/7625588/36931426-d560d6aa-1eef-11e8-96a2-14812f7994a3.png)
 
 #### Order
 
