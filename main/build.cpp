@@ -1,9 +1,9 @@
 #include "stdio.h"
-#include "Recast.h"
+#include "../recast/Recast.h"
 #include "math.h"
 #include "build.h"
-#include "InputGeom.h"
-#include "MeshLoaderObj.h"
+#include "../recast/InputGeom.h"
+#include "../recast/MeshLoaderObj.h"
 
 rcConfig m_cfg;
 class rcContext *m_ctx = new rcContext;

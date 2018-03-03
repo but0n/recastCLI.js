@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Recast.h"
+#include "../recast/Recast.h"
 #include "build.h"
 
 const char *c_filename;
