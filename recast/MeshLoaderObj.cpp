@@ -245,18 +245,32 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 }
 
 static char *parseVerts(const char *str, double *pdata) {
+	printf("%s\n", str);
+
 	if(!str || !pdata)
 		return NULL;
 	char *s = (char *)str;
-	while((*s != '\r' || *s != '\n') && !s) {
-		char data[20]; ///< declare some space on stack to store verts data
-		while(*s != ' ') {
-			sprintf(data, data, s++);
+	while(*s != '@') {
+		printf("[handle string]: %s\n", s);
+		if(*s == ' ') {
+			// entry
+			s++;
+			printf("[HEAP]: Declare data[20]:\n");
+			char data[20]; ///< declare some space on stack to store verts data
+			while(*s != '@' & *s != ' ') {
+				char a = s[0];
+				printf("Current data '%c'\n", a);
+				sprintf(data, "%s%c", data, a);
+				s++;
+			}
+			// *pdata++ = atof(data);
+			printf("\t[Result]: %s\n", data);
+		} else {
+			s++;
 		}
 		// Skip character <Space>
-		s++;
 		// store current data
-		*pdata++ = atof(data);
+		// *pdata++ = atof(data);
 	}
 	// Meet line end flag '\r' or '\n'
 	// return current address of data stream
@@ -287,14 +301,15 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 				break;
 			case 'v':
 				/// Parse and updata pointer
-				parseVerts(buf, v) - buf;
+				parseVerts(buf++, v);
 				x = v[0];
 				y = v[1];
 				z = v[2];
 			case 'f':
 				break;
 		}
-		printf("test: %f, %f, %f\n", x, y, z);
+		// buf++;
+		// printf("test: %f, %f, %f\n", x, y, z);
 	}
 	
 	// while (src < srcEnd)

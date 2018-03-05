@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "algorithm": "cpp",
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "iterator": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "vector": "cpp"
     }
 }
