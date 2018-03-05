@@ -244,45 +244,35 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 	return true;
 }
 
-static char *parseVerts(const char *str, double *pdata) {
+// Unit test see #a5bff6b
+static long parseVerts(const char *str, double *pdata) {
 	printf("%s\n", str);
 
 	if(!str || !pdata)
 		return NULL;
 	char *s = (char *)str;
-	while(*s != '@') {
-
-#ifdef DEBUG
-		printf("[handle string]: %s\n", s);
-#endif
-		if(*s == ' ') {
-			// entry
-			s++;
-#ifdef DEBUG
-			printf("[HEAP]: Declare data[20]:\n");
-#endif
-			char data[20]; ///< declare some space on stack to store verts data
+	while(*s != '@') {	// Split line with line end flag '@'
+		if(*s == ' ') { // Space: data entry
+			s++; // Skip current [space]
+			char data[20]; ///< declare some space to store verts data
 			memset(data, 0, sizeof(data));
-			while(*s != '@' & *s != ' ') {
+			while(*s != '@' && *s != ' ') {
 				char a = s[0];
-#ifdef DEBUG
-				printf("Current data '%c'\n", a);
-#endif
 				sprintf(data, "%s%c", data, a);
 				s++;
 			}
 			*pdata++ = atof(data);
-#ifdef DEBUG
-			printf("\t[Result]: %f\n", *(pdata-1));
-#endif
 		} else {
 			s++;
 		}
-		// *pdata++ = atof(data);
 	}
-	// Meet line end flag '\r' or '\n'
+	// Update pointer
 	// return current address of data stream
-	return s;
+	s--;
+	s--;
+	long r = s - str;
+	// str = s;
+	return r;
 
 }
 
@@ -299,26 +289,29 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 	int tcap = 0;
 
 	bool isVert = false;
-
-	for(long i = 0; i < bufSize; i++) {
+	printf("Length: %d", bufSize);
+	for(long i = 0; i < bufSize; i++, buf++) {
+		printf("\tT:%d : %c\n", i, buf[0]);
 		double v[6];
 		switch(*buf) {
-			case ' ':
-			case '\n':
-			case '\r':
-				break;
 			case 'v':
 				/// Parse and updata pointer
-				parseVerts(buf++, v);
+				parseVerts(buf, v);
 				x = v[0];
 				y = v[1];
 				z = v[2];
+				printf("[Result]: x: %f, y: %f, z: %f\n", x, y, z);
+
 			case 'f':
+			default:
+			case ' ':
 				break;
 		}
 		// buf++;
 		// printf("test: %f, %f, %f\n", x, y, z);
 	}
+	printf("Keep Alive~\n"); // it will crash without this step :(
+	
 	
 	// while (src < srcEnd)
 	// {

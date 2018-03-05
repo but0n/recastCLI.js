@@ -108,7 +108,8 @@ namespace demo {
     void test(const FunctionCallbackInfo<Value>& args) {
         class rcMeshLoaderObj* m_mesh = new rcMeshLoaderObj;
         // m_mesh->readBuffer("v 1234@");
-        m_mesh->readBuffer("v -21.847065 -2.492895 19.569759@");
+        m_mesh->readBuffer("v -21.847065 -2.492895 19.569759@v 1.00000 -2.99999 19.33333");
+// v -21.847065 -2.492895 19.569759@v 1.00000 -2.99999 19.33333
     }
 
     void init(Local<Object> exports) {
