@@ -107,27 +107,27 @@ int build(
 	// Init build configuration from GUI
 
 	// 体素大小
-	m_cfg.cs = CFG_CELL_SIZE;   // Cell Size
-	m_cfg.ch = CFG_CELL_HEIGHT; // Cell Height
+	m_cfg.cs = cellSize;   // Cell Size
+	m_cfg.ch = cellHeight; // Cell Height
 
 	// Agent
-	m_cfg.walkableHeight = (int)ceilf(CFG_AGENT_HEIGHT / m_cfg.ch);
-	m_cfg.walkableRadius = (int)ceilf(CFG_AGENT_RADIUS / m_cfg.cs);
-	m_cfg.walkableClimb = (int)floorf(CFG_AGENT_MAX_CLIMP / m_cfg.ch);
-	m_cfg.walkableSlopeAngle = CFG_AGENT_MAX_SLOPE;
+	m_cfg.walkableHeight = (int)ceilf(agentHeight / m_cfg.ch);
+	m_cfg.walkableRadius = (int)ceilf(agentRadius / m_cfg.cs);
+	m_cfg.walkableClimb = (int)floorf(agentMaxClimp / m_cfg.ch);
+	m_cfg.walkableSlopeAngle = agentMaxSlope;
 
 	// Polygonization
-	m_cfg.maxEdgeLen = (int)(CFG_EDGE_MAX_LEN / m_cfg.cs);
-	m_cfg.maxSimplificationError = (float)CFG_EDGE_MAX_ERROR;
-	m_cfg.maxVertsPerPoly = (int)CFG_VERTS_PER_POLY;
+	m_cfg.maxEdgeLen = (int)(edgeMaxLen / m_cfg.cs);
+	m_cfg.maxSimplificationError = (float)edgeMaxError;
+	m_cfg.maxVertsPerPoly = (int)vertsPerPoly;
 
 	// Region
-	m_cfg.minRegionArea = (int)rcSqr(CFG_REGION_MIN_SIZE);	 // Note: area = size*size
-	m_cfg.mergeRegionArea = (int)rcSqr(CFG_REGION_MERGE_SIZE); // Note: area = size*size
+	m_cfg.minRegionArea = (int)rcSqr(regionMinSize);	 // Note: area = size*size
+	m_cfg.mergeRegionArea = (int)rcSqr(regionMergeSize); // Note: area = size*size
 
 	// Detail mesh
-	m_cfg.detailSampleDist = (float)CFG_DETAIL_SAMPLE_DIST < 0.9f ? 0 : m_cfg.cs * CFG_DETAIL_SAMPLE_DIST;
-	m_cfg.detailSampleMaxError = (float)m_cfg.ch * CFG_DETAIL_SAMPLE_MAX_ERROR;
+	m_cfg.detailSampleDist = (float)detailSampleDist < 0.9f ? 0 : m_cfg.cs * detailSampleDist;
+	m_cfg.detailSampleMaxError = (float)m_cfg.ch * detailSampleMaxError;
 
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
