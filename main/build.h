@@ -59,6 +59,6 @@ extern bool m_filterWalkableLowHeightSpans;
 /// @param detailSampleMaxError 细节样本最大错误
 /// @return int 构建状态
 ///
-extern int build(const char *filename, float cellSize, float cellHeight, float agentHeight, float agentRadius, float agentMaxClimp, int agentMaxSlope, int regionMinSize, int regionMergeSize, int edgeMaxLen, float edgeMaxError, int vertsPerPoly, int detailSampleDist, int detailSampleMaxError);
+extern int build(const char *filename, float cellSize, float cellHeight, float agentHeight, float agentRadius, float agentMaxClimp, float agentMaxSlope, float regionMinSize, float regionMergeSize, float edgeMaxLen, float edgeMaxError, float vertsPerPoly, float detailSampleDist, float detailSampleMaxError);
 
 #endif

@@ -243,3 +243,118 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 	m_filename = filename;
 	return true;
 }
+
+static char *parseVerts(const char *str, double *pdata) {
+	if(!str || !pdata)
+		return NULL;
+	char *s = (char *)str;
+	while((*s != '\r' || *s != '\n') && !s) {
+		char data[20]; ///< declare some space on stack to store verts data
+		while(*s != ' ') {
+			sprintf(data, data, s++);
+		}
+		// Skip character <Space>
+		s++;
+		// store current data
+		*pdata++ = atof(data);
+	}
+	// Meet line end flag '\r' or '\n'
+	// return current address of data stream
+	return s;
+
+}
+
+bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
+{
+	const char *buf = objBuffer.c_str();
+	const long bufSize = objBuffer.length();
+
+	char row[512];
+	int face[32];
+	float x,y,z;
+	int nv;
+	int vcap = 0;
+	int tcap = 0;
+
+	bool isVert = false;
+
+	for(long i = 0; i < bufSize; i++) {
+		double v[6];
+		switch(*buf) {
+			case ' ':
+			case '\n':
+			case '\r':
+				break;
+			case 'v':
+				/// Parse and updata pointer
+				parseVerts(buf, v) - buf;
+				x = v[0];
+				y = v[1];
+				z = v[2];
+			case 'f':
+				break;
+		}
+		printf("test: %f, %f, %f\n", x, y, z);
+	}
+	
+	// while (src < srcEnd)
+	// {
+	// 	// Parse one row
+	// 	row[0] = '\0';
+	// 	src = parseRow(src, srcEnd, row, sizeof(row)/sizeof(char));
+	// 	// Skip comments
+	// 	if (row[0] == '#') continue;
+	// 	if (row[0] == 'v' && row[1] != 'n' && row[1] != 't')
+	// 	{
+	// 		// Vertex pos
+	// 		sscanf(row+1, "%f %f %f", &x, &y, &z);
+	// 		addVertex(x, y, z, vcap);
+	// 	}
+	// 	if (row[0] == 'f')
+	// 	{
+	// 		// Faces
+	// 		nv = parseFace(row+1, face, 32, m_vertCount);
+	// 		for (int i = 2; i < nv; ++i)
+	// 		{
+	// 			const int a = face[0];
+	// 			const int b = face[i-1];
+	// 			const int c = face[i];
+	// 			if (a < 0 || a >= m_vertCount || b < 0 || b >= m_vertCount || c < 0 || c >= m_vertCount)
+	// 				continue;
+	// 			addTriangle(a, b, c, tcap);
+	// 		}
+	// 	}
+	// }
+
+	// delete [] buf;
+
+	// // Calculate normals.
+	// m_normals = new float[m_triCount*3];
+	// for (int i = 0; i < m_triCount*3; i += 3)
+	// {
+	// 	const float* v0 = &m_verts[m_tris[i]*3];
+	// 	const float* v1 = &m_verts[m_tris[i+1]*3];
+	// 	const float* v2 = &m_verts[m_tris[i+2]*3];
+	// 	float e0[3], e1[3];
+	// 	for (int j = 0; j < 3; ++j)
+	// 	{
+	// 		e0[j] = v1[j] - v0[j];
+	// 		e1[j] = v2[j] - v0[j];
+	// 	}
+	// 	float* n = &m_normals[i];
+	// 	n[0] = e0[1]*e1[2] - e0[2]*e1[1];
+	// 	n[1] = e0[2]*e1[0] - e0[0]*e1[2];
+	// 	n[2] = e0[0]*e1[1] - e0[1]*e1[0];
+	// 	float d = sqrtf(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
+	// 	if (d > 0)
+	// 	{
+	// 		d = 1.0f/d;
+	// 		n[0] *= d;
+	// 		n[1] *= d;
+	// 		n[2] *= d;
+	// 	}
+	// }
+	
+	// m_filename = "Null";
+	return true;
+}
