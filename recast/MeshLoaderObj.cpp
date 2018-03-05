@@ -251,21 +251,30 @@ static char *parseVerts(const char *str, double *pdata) {
 		return NULL;
 	char *s = (char *)str;
 	while(*s != '@') {
+
+#ifdef DEBUG
 		printf("[handle string]: %s\n", s);
+#endif
 		if(*s == ' ') {
 			// entry
 			s++;
+#ifdef DEBUG
 			printf("[HEAP]: Declare data[20]:\n");
+#endif
 			char data[20]; ///< declare some space on stack to store verts data
 			memset(data, 0, sizeof(data));
 			while(*s != '@' & *s != ' ') {
 				char a = s[0];
+#ifdef DEBUG
 				printf("Current data '%c'\n", a);
+#endif
 				sprintf(data, "%s%c", data, a);
 				s++;
 			}
-			// *pdata++ = atof(data);
-			printf("\t[Result]: %s\n", data);
+			*pdata++ = atof(data);
+#ifdef DEBUG
+			printf("\t[Result]: %f\n", *(pdata-1));
+#endif
 		} else {
 			s++;
 		}
