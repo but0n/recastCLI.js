@@ -28,7 +28,6 @@ namespace demo {
     void buildNavmesh(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
 
-        const char *c_filename = ToCString(Local<v8::String>::Cast(args[0]));
         float c_cellSize = Local<v8::Number>::Cast(args[1])->NumberValue();
         float c_cellHeight = Local<v8::Number>::Cast(args[2])->NumberValue();
         float c_agentHeight = Local<v8::Number>::Cast(args[3])->NumberValue();
@@ -103,7 +102,8 @@ namespace demo {
     }
 
     void loadBuff(const FunctionCallbackInfo<Value>& args) {
-        load(" ");
+        const char *c_filename = ToCString(Local<v8::String>::Cast(args[0]));        
+        load(c_filename);
     }
 
     void init(Local<Object> exports) {
