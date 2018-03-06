@@ -82,8 +82,8 @@ namespace demo {
 
         if(c_detailSampleMaxError != c_detailSampleMaxError)
             c_detailSampleMaxError = 0;
-
-        build(
+        char *result;
+        result = build(
             c_cellSize,
             c_cellHeight,
             c_agentHeight,
@@ -98,25 +98,18 @@ namespace demo {
             c_detailSampleDist,
             c_detailSampleMaxError
         );
-
+        Local<String> n_mesh = v8::String::NewFromUtf8(isolate, result);
+        args.GetReturnValue().Set(n_mesh);
     }
 
     void loadBuff(const FunctionCallbackInfo<Value>& args) {
         load(" ");
     }
 
-    void test(const FunctionCallbackInfo<Value>& args) {
-        class rcMeshLoaderObj* m_mesh = new rcMeshLoaderObj;
-        m_mesh->readBuffer("v 1234@");
-        // m_mesh->readBuffer("v -21.847065 -2.492895 19.569759@v 1.00000 -2.99999 19.33333@");
-// v -21.847065 -2.492895 19.569759@v 1.00000 -2.99999 19.33333
-    }
-
     void init(Local<Object> exports) {
         NODE_SET_METHOD(exports, "hello", Method);
         NODE_SET_METHOD(exports, "build", buildNavmesh);
         NODE_SET_METHOD(exports, "load", loadBuff);
-        NODE_SET_METHOD(exports, "t", test);
     }
 
     NODE_MODULE(NODE_GYP_MODULE_NAME, init)
