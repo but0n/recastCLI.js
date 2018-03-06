@@ -42,6 +42,14 @@ extern bool m_filterLedgeSpans;
 extern bool m_filterWalkableLowHeightSpans;
 
 ///
+/// @brief 读取地图
+/// 
+/// @param str 数据
+/// @return int 读取状态
+///
+extern int load(const char *str);
+
+///
 /// @brief 构建 Navigation mesh
 /// @param filename 文件名, 相对路径
 /// @param cellSize 网格长度, 用来体素化
@@ -59,6 +67,6 @@ extern bool m_filterWalkableLowHeightSpans;
 /// @param detailSampleMaxError 细节样本最大错误
 /// @return int 构建状态
 ///
-extern int build(const char *filename, float cellSize, float cellHeight, float agentHeight, float agentRadius, float agentMaxClimp, float agentMaxSlope, float regionMinSize, float regionMergeSize, float edgeMaxLen, float edgeMaxError, float vertsPerPoly, float detailSampleDist, float detailSampleMaxError);
+extern int build( float cellSize, float cellHeight, float agentHeight, float agentRadius, float agentMaxClimp, float agentMaxSlope, float regionMinSize, float regionMergeSize, float edgeMaxLen, float edgeMaxError, float vertsPerPoly, float detailSampleDist, float detailSampleMaxError);
 
 #endif

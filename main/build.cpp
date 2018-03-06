@@ -28,8 +28,15 @@ rcContourSet *m_cset;
 rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
+int load(const char *str) {
+	str = testdata;
+	if (!m_geom->load(m_ctx, str)) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot read: %s", str);
+		return -1;
+	}
+	return 0;
+}
 int build(
-    const char *filename,
     float 	cellSize,
     float 	cellHeight,
     float 	agentHeight,
@@ -77,10 +84,10 @@ int build(
 	if(detailSampleMaxError == 0)
 		detailSampleMaxError = CFG_DETAIL_SAMPLE_MAX_ERROR;
 
+	if (!m_geom->getMesh()) {
 
-    if (!m_geom->load(m_ctx, testdata)) {
-		m_ctx->log(RC_LOG_ERROR, "Cannot load file: %s", filename);
-		return -1;
+		m_ctx->log(RC_LOG_ERROR, "No mesh data, please read buffer first!");
+		return false;
 	}
 	// 模型包围盒
 	const float *bmin = m_geom->getNavMeshBoundsMin();
@@ -99,11 +106,6 @@ int build(
 	printf("bmax\t: %f\n", *bmax);
 #endif
 
-	if (!m_geom->getMesh()) {
-
-		m_ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Out of memory 'm_chunkyMesh'.");
-		return false;
-	}
 	//
 	// Step 1. Initialize build config.
 	//
