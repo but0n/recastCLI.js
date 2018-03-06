@@ -247,7 +247,7 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 // Unit test see #a5bff6b
 static long parseVerts(const char *str, float *pdata) {
 	if(!str || !pdata)
-		return NULL;
+		return 0;
 	char *s = (char *)str;
 	while(*s != '@') {	// Split line with line end flag '@'
 		if(*s == ' ') { // Space: data entry
@@ -271,9 +271,9 @@ static long parseVerts(const char *str, float *pdata) {
 	return r;
 }
 
-static long parseFaces(const char *str, long *pdata) {
+static int parseFaces(const char *str, int *pdata) {
 	if(!str || !pdata)
-		return NULL;
+		return 0;
 	char *s = (char *)str;
 	while(*s != '@') {	// Split line with line end flag '@'
 		if(*s == ' ') { // Space: data entry
@@ -292,7 +292,7 @@ static long parseFaces(const char *str, long *pdata) {
 	}
 	// Update pointer
 	// return current address of data stream
-	long r = s - str;
+	int r = s - str;
 	// str = s;
 	return r;
 }
@@ -305,7 +305,7 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 	char row[512];
 	int face[32];
 	float x,y,z;
-	long fx,fy,fz;
+	int a,b,c;
 	int nv = 0;
 	// int nf = 0;
 	int vcap = 0;
@@ -315,18 +315,19 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 	for(long i = 0; i < bufSize; i++, buf++) {
 		// printf("\tT:%d : %c\n", i, buf[0]);
 		float v[3];
-		long f[3];
+		int f[3];
 		switch(*buf) {
 			case 'v':
 				if(buf[1]!=' ')
 					break;
 				/// Parse and updata pointer
 				sscanf(buf+1, "%f %f %f", &x, &y, &z);
-				nv++;
+				addVertex(x, y, z, vcap);
+				// nv++;
 				// x = v[0];
 				// y = v[1];
 				// z = v[2];
-				printf("\t[Vert Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
+				// printf("\t[Vert Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
 				break;
 
 			case 'f':
@@ -334,10 +335,11 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 					break;
 				/// Parse and updata pointer
 				parseFaces(buf, f);
-				fx = f[0];
-				fy = f[1];
-				fz = f[2];
-				printf("[Face Result]: x: %d, y: %d, z: %d\n", fx, fy, fz);
+				a = f[0];
+				b = f[1];
+				c = f[2];
+				addTriangle(a, b, c, tcap);
+				// printf("[Face Result]: x: %d, y: %d, z: %d\n", fx, fy, fz);
 				break;
 			default:
 			case ' ':

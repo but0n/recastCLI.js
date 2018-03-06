@@ -136,12 +136,12 @@ bool InputGeom::loadMesh(rcContext* ctx, const std::string& filepath)
 		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
 		return false;
 	}
-	if (!m_mesh->load(filepath))
+	if (!m_mesh->readBuffer(filepath))
 	{
 		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load '%s'", filepath.c_str());
 		return false;
 	}
-
+	
 	rcCalcBounds(m_mesh->getVerts(), m_mesh->getVertCount(), m_meshBMin, m_meshBMax);
 
 	m_chunkyMesh = new rcChunkyTriMesh;
@@ -302,12 +302,12 @@ bool InputGeom::load(rcContext* ctx, const std::string& filepath)
 	std::string extension = filepath.substr(extensionPos);
 	std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
 
-	if (extension == ".gset")
-		return loadGeomSet(ctx, filepath);
-	if (extension == ".obj")
-		return loadMesh(ctx, filepath);
+	// if (extension == ".gset")
+	// 	return loadGeomSet(ctx, filepath);
+	// if (extension == ".obj")
+	return loadMesh(ctx, filepath);
 
-	return false;
+	// return false;
 }
 
 bool InputGeom::saveGeomSet(const BuildSettings* settings)

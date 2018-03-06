@@ -83,9 +83,6 @@ namespace demo {
         if(c_detailSampleMaxError != c_detailSampleMaxError)
             c_detailSampleMaxError = 0;
 
-
-        printf("%f\n", c_agentHeight);
-
         build(
             c_filename,
             c_cellSize,
