@@ -245,7 +245,7 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 }
 
 // Unit test see #a5bff6b
-static long parseVerts(const char *str, double *pdata) {
+static long parseVerts(const char *str, float *pdata) {
 	if(!str || !pdata)
 		return NULL;
 	char *s = (char *)str;
@@ -304,28 +304,28 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 
 	char row[512];
 	int face[32];
-	double x,y,z;
+	float x,y,z;
 	long fx,fy,fz;
 	int nv = 0;
-	int nf = 0;
+	// int nf = 0;
 	int vcap = 0;
 	int tcap = 0;
 
 	bool isVert = false;
 	for(long i = 0; i < bufSize; i++, buf++) {
 		// printf("\tT:%d : %c\n", i, buf[0]);
-		double v[3];
+		float v[3];
 		long f[3];
 		switch(*buf) {
 			case 'v':
 				if(buf[1]!=' ')
 					break;
 				/// Parse and updata pointer
-				parseVerts(buf, v);
+				sscanf(buf+1, "%f %f %f", &x, &y, &z);
 				nv++;
-				x = v[0];
-				y = v[1];
-				z = v[2];
+				// x = v[0];
+				// y = v[1];
+				// z = v[2];
 				printf("\t[Vert Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
 				break;
 
@@ -334,11 +334,10 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 					break;
 				/// Parse and updata pointer
 				parseFaces(buf, f);
-				nf++;
 				fx = f[0];
 				fy = f[1];
 				fz = f[2];
-				printf("[Face Result %d]: x: %d, y: %d, z: %d\n", nf, fx, fy, fz);
+				printf("[Face Result]: x: %d, y: %d, z: %d\n", fx, fy, fz);
 				break;
 			default:
 			case ' ':
