@@ -246,8 +246,6 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 
 // Unit test see #a5bff6b
 static long parseVerts(const char *str, double *pdata) {
-	printf("%s\n", str);
-
 	if(!str || !pdata)
 		return NULL;
 	char *s = (char *)str;
@@ -263,13 +261,11 @@ static long parseVerts(const char *str, double *pdata) {
 			}
 			*pdata++ = atof(data);
 		} else {
-			s++;
+			s++; // seems like c++ doesn't support *s++
 		}
 	}
 	// Update pointer
 	// return current address of data stream
-	s--;
-	s--;
 	long r = s - str;
 	// str = s;
 	return r;
@@ -283,24 +279,24 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 
 	char row[512];
 	int face[32];
-	float x,y,z;
-	int nv;
+	double x,y,z;
+	int nv = 0;
 	int vcap = 0;
 	int tcap = 0;
 
 	bool isVert = false;
-	printf("Length: %d", bufSize);
 	for(long i = 0; i < bufSize; i++, buf++) {
-		printf("\tT:%d : %c\n", i, buf[0]);
+		// printf("\tT:%d : %c\n", i, buf[0]);
 		double v[6];
 		switch(*buf) {
 			case 'v':
 				/// Parse and updata pointer
 				parseVerts(buf, v);
+				nv++;
 				x = v[0];
 				y = v[1];
 				z = v[2];
-				printf("[Result]: x: %f, y: %f, z: %f\n", x, y, z);
+				printf("[Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
 
 			case 'f':
 			default:
@@ -310,7 +306,6 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 		// buf++;
 		// printf("test: %f, %f, %f\n", x, y, z);
 	}
-	printf("Keep Alive~\n"); // it will crash without this step :(
 	
 	
 	// while (src < srcEnd)
