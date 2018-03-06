@@ -17,7 +17,8 @@ $ node-gyp rebuild
 
 ```js
 const c = require('./build/Release/RecastCLI');
-c.build("nav_test.obj");
+c.load(data);
+c.build(); // return string
 ```
 
 ![](https://user-images.githubusercontent.com/7625588/36931630-176faf62-1ef5-11e8-8536-e1e98abbcd73.png)
