@@ -318,6 +318,8 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 		long f[3];
 		switch(*buf) {
 			case 'v':
+				if(buf[1]!=' ')
+					break;
 				/// Parse and updata pointer
 				parseVerts(buf, v);
 				nv++;
@@ -328,6 +330,8 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 				break;
 
 			case 'f':
+				if(buf[1]!=' ')
+					break;
 				/// Parse and updata pointer
 				parseFaces(buf, f);
 				nf++;
