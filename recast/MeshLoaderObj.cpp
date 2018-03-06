@@ -269,7 +269,32 @@ static long parseVerts(const char *str, double *pdata) {
 	long r = s - str;
 	// str = s;
 	return r;
+}
 
+static long parseFaces(const char *str, long *pdata) {
+	if(!str || !pdata)
+		return NULL;
+	char *s = (char *)str;
+	while(*s != '@') {	// Split line with line end flag '@'
+		if(*s == ' ') { // Space: data entry
+			s++; // Skip current [space]
+			char data[20]; ///< declare some space to store verts data
+			memset(data, 0, sizeof(data));
+			while(*s != '@' && *s != ' ') {
+				char a = s[0];
+				sprintf(data, "%s%c", data, a);
+				s++;
+			}
+			*pdata++ = atol(data);
+		} else {
+			s++; // seems like c++ doesn't support *s++
+		}
+	}
+	// Update pointer
+	// return current address of data stream
+	long r = s - str;
+	// str = s;
+	return r;
 }
 
 bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
@@ -280,14 +305,17 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 	char row[512];
 	int face[32];
 	double x,y,z;
+	long fx,fy,fz;
 	int nv = 0;
+	int nf = 0;
 	int vcap = 0;
 	int tcap = 0;
 
 	bool isVert = false;
 	for(long i = 0; i < bufSize; i++, buf++) {
 		// printf("\tT:%d : %c\n", i, buf[0]);
-		double v[6];
+		double v[3];
+		long f[3];
 		switch(*buf) {
 			case 'v':
 				/// Parse and updata pointer
@@ -296,9 +324,18 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 				x = v[0];
 				y = v[1];
 				z = v[2];
-				printf("[Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
+				printf("\t[Vert Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
+				break;
 
 			case 'f':
+				/// Parse and updata pointer
+				parseFaces(buf, f);
+				nf++;
+				fx = f[0];
+				fy = f[1];
+				fz = f[2];
+				printf("[Face Result %d]: x: %d, y: %d, z: %d\n", nf, fx, fy, fz);
+				break;
 			default:
 			case ' ':
 				break;
