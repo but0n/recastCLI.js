@@ -27,7 +27,7 @@ rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
 int load(const char *str) {
-	if (!m_geom->load(m_ctx, str) || true) {
+	if (!m_geom->load(m_ctx, str)) {
 		m_ctx->log(RC_LOG_ERROR, "Cannot read: %s", str);
 		return -1;
 	}
