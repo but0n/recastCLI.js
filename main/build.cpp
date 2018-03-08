@@ -6,6 +6,7 @@
 #include "../recast/MeshLoaderObj.h"
 
 // #define DEBUG
+#define OUTPUT_FILE
 
 rcConfig m_cfg;
 class rcContext *m_ctx = new rcContext;
@@ -26,13 +27,56 @@ rcContourSet *m_cset;
 rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
+#ifdef OUTPUT_FILE
+static std::string targ_filename;
+#endif
+
+void setTargetFile(const char *str) {
+	targ_filename = str;
+}
+
 int load(const char *str) {
-	if (!m_geom->load(m_ctx, str)) {
+	if (!targ_filename.length()) {
+		m_ctx->log(RC_LOG_ERROR, "Target name empty!\n");
+		return 0;
+	}
+	const char *path = targ_filename.c_str();
+	// Parse and save origin data as a obj file
+	FILE *fp = fopen(path, "w+"); // Create or override file
+	if (fp == NULL) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot create file: %s", path);
+		return -1;
+	}
+
+	while(*str != '\0') {
+		if (*str == '@') {
+			if (fputc('\n', fp) == EOF) {
+				m_ctx->log(RC_LOG_ERROR, "[Failed] Cannot write file: %s", str[0]);
+				fclose(fp);
+				fp = NULL;
+				return -1;
+			}
+		} else {
+			if (fputc(*str, fp) == EOF) {
+				m_ctx->log(RC_LOG_ERROR, "[Failed] Cannot write file: %s", str[0]);
+				fclose(fp);
+				fp = NULL;
+				return -1;
+			}
+		}
+		str++;
+	}
+
+	fclose(fp);
+	fp = NULL;
+
+	if (!m_geom->load(m_ctx, path)) {
 		m_ctx->log(RC_LOG_ERROR, "Cannot read: %s", str);
 		return -1;
 	}
 	return 0;
 }
+
 char *build(
     float 	cellSize,
     float 	cellHeight,
@@ -49,6 +93,10 @@ char *build(
 	float 	detailSampleMaxError
 )
 {
+	if (!targ_filename.length()) {
+		m_ctx->log(RC_LOG_ERROR, "Target name empty!\n");
+		return NULL;
+	}
 
 	if(cellSize == 0)
 		cellSize = CFG_CELL_SIZE;
@@ -417,6 +465,15 @@ char *build(
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
+#ifdef OUTPUT_FILE
+	FILE *fp = fopen(targ_filename.c_str(), "w+");
+	if(fp == NULL) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot write target file!");
+		return "Error!";
+	}
+#endif
+
+
 	char obj[262144];
 	char *p_obj = obj;
 
@@ -430,7 +487,13 @@ char *build(
             float x = m_pmesh->bmin[0] + m_pmesh->verts[i * 3 + 0] * cs;
             float y = m_pmesh->bmin[1] + m_pmesh->verts[i * 3 + 1] * ch;
             float z = m_pmesh->bmin[2] + m_pmesh->verts[i * 3 + 2] * cs;
+#if defined(OUTPUT_STRING)
             p_obj += sprintf(p_obj, "v %f %f %f ", x, y, z);
+#elif defined(OUTPUT_FILE)
+            p_obj += sprintf(p_obj, "v %f %f %f\n", x, y, z);
+#else
+#error Please select output type
+#endif
         }
         // printf("\r\n");
         // Polygon
@@ -447,12 +510,26 @@ char *build(
                 }
                 else
                 {
+#if defined(OUTPUT_STRING)
                     p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
+#elif defined(OUTPUT_FILE)
+                    p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
+#else
+#error Please select output type!
+#endif
                 }
             }
-            // p_obj += sprintf(p_obj, " ");
+#ifdef OUTPUT_FILE
+            p_obj += sprintf(p_obj, "\n");
+#endif
         }
     } while (0);
+
+#ifdef OUTPUT_FILE
+	fputs(obj, fp);
+	fclose(fp);
+	fp = NULL;
+#endif
 
 #ifdef DEBUG
     float m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;

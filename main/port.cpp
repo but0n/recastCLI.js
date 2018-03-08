@@ -6,11 +6,6 @@
 #include "../recast/MeshLoaderObj.h"
 #include "build.h"
 
-const char* ToCString(v8::Local<v8::String> str) {
-    v8::String::Utf8Value value(str);
-    return *value ? *value : "<string conversion failed>";
-}
-
 namespace demo {
 
     using v8::FunctionCallbackInfo;
@@ -19,11 +14,6 @@ namespace demo {
     using v8::Object;
     using v8::String;
     using v8::Value;
-
-    void Method(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
-        args.GetReturnValue().Set(String::NewFromUtf8(isolate, "world"));
-    }
 
     void buildNavmesh(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
@@ -102,14 +92,23 @@ namespace demo {
     }
 
     void loadBuff(const FunctionCallbackInfo<Value>& args) {
-        const char *c_filename = ToCString(Local<v8::String>::Cast(args[0]));        
-        load(c_filename);
+        Isolate* isolate = args.GetIsolate();
+        v8::String::Utf8Value param1(args[0]->ToString());
+        std::string str = std::string(*param1);
+        load(str.c_str());
+    }
+
+    void setTarget(const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        v8::String::Utf8Value param1(args[0]->ToString());
+        std::string str = std::string(*param1);
+        setTargetFile(str.c_str());
     }
 
     void init(Local<Object> exports) {
-        NODE_SET_METHOD(exports, "hello", Method);
         NODE_SET_METHOD(exports, "build", buildNavmesh);
         NODE_SET_METHOD(exports, "load", loadBuff);
+        NODE_SET_METHOD(exports, "setTarget", setTarget);
     }
 
     NODE_MODULE(NODE_GYP_MODULE_NAME, init)

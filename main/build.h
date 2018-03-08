@@ -42,6 +42,13 @@ extern bool m_filterLedgeSpans;
 extern bool m_filterWalkableLowHeightSpans;
 
 ///
+/// @brief 设置目标文件的名称
+/// 
+/// @param str 文件名
+///
+extern void setTargetFile(const char *str);
+
+///
 /// @brief 读取地图
 /// 
 /// @param str 数据
