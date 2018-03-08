@@ -4,13 +4,13 @@
 // Default setting
 
 // Rasterization
-#define CFG_CELL_SIZE   0.30
-#define CFG_CELL_HEIGHT 0.20
+#define CFG_CELL_SIZE   0.03
+#define CFG_CELL_HEIGHT 0.02
 
 // Agent
-#define CFG_AGENT_HEIGHT    2.0
-#define CFG_AGENT_RADIUS    0.6
-#define CFG_AGENT_MAX_CLIMP 0.9
+#define CFG_AGENT_HEIGHT    0.2
+#define CFG_AGENT_RADIUS    0.03
+#define CFG_AGENT_MAX_CLIMP 0.001
 #define CFG_AGENT_MAX_SLOPE 45
 
 // Region
