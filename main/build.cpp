@@ -6,7 +6,7 @@
 #include "../recast/MeshLoaderObj.h"
 
 // #define DEBUG
-#define OUTPUT_FILE
+#define OUTPUT_STRING
 
 rcConfig m_cfg;
 class rcContext *m_ctx = new rcContext;
@@ -27,9 +27,7 @@ rcContourSet *m_cset;
 rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
-#ifdef OUTPUT_FILE
 static std::string targ_filename;
-#endif
 
 void setTargetFile(const char *str) {
 	targ_filename = str;
@@ -74,6 +72,11 @@ int load(const char *str) {
 		m_ctx->log(RC_LOG_ERROR, "Cannot read: %s", str);
 		return -1;
 	}
+
+#ifndef OUTPUT_FILE
+	remove(path);
+#endif
+
 	return 0;
 }
 
