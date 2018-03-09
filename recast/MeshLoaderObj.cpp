@@ -302,12 +302,9 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 	const char *buf = objBuffer.c_str();
 	const long bufSize = objBuffer.length();
 
-	char row[512];
 	int face[32];
 	float x,y,z;
 	int a,b,c;
-	int nv = 0;
-	// int nf = 0;
 	int vcap = 0;
 	int tcap = 0;
 
@@ -323,10 +320,6 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 				/// Parse and updata pointer
 				sscanf(buf+1, "%f %f %f", &x, &y, &z);
 				addVertex(x, y, z, vcap);
-				// nv++;
-				// x = v[0];
-				// y = v[1];
-				// z = v[2];
 				// printf("\t[Vert Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
 				break;
 
@@ -339,7 +332,7 @@ bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
 				b = f[1];
 				c = f[2];
 				addTriangle(a, b, c, tcap);
-				// printf("[Face Result]: x: %d, y: %d, z: %d\n", fx, fy, fz);
+				// printf("[Face Result]: x: %d, y: %d, z: %d\n", a, b, c);
 				break;
 			default:
 			case ' ':
