@@ -33,8 +33,7 @@ c.build(0.001, 0.001, 0.1, 0.1, 10.0); // return string
 c.save("exp.obj");
 ```
 
-![](https://user-images.githubusercontent.com/7625588/37192735-14cc6eec-23a2-11e8-8f3f-a9af37de77e5.png)
-![](https://user-images.githubusercontent.com/7625588/37192733-0c8cb8a4-23a2-11e8-87e1-dc84d8ec5ffc.png)
+![](https://user-images.githubusercontent.com/7625588/37197151-9621d722-23b4-11e8-95b2-f2f2a9b6dccf.png)
 
 ----
 # Command line tools
