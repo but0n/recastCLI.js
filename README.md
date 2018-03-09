@@ -33,7 +33,8 @@ c.build(0.001, 0.001, 0.1, 0.1, 10.0); // return string
 c.save("exp.obj");
 ```
 
-![](https://user-images.githubusercontent.com/7625588/36931630-176faf62-1ef5-11e8-8536-e1e98abbcd73.png)
+![](https://user-images.githubusercontent.com/7625588/37192735-14cc6eec-23a2-11e8-8f3f-a9af37de77e5.png)
+![](https://user-images.githubusercontent.com/7625588/37192733-0c8cb8a4-23a2-11e8-87e1-dc84d8ec5ffc.png)
 
 ----
 ## Command line tools
@@ -47,6 +48,9 @@ c.save("exp.obj");
 ```shell
 $ ./RecastCLI nav_test.obj 0 0 0 0 0 0 0 0 0 0 0 0 0 > navmesh.obj
 ```
+ - Running at debug mode
+Toggle with macro `#define DEBUG`
+![](https://user-images.githubusercontent.com/7625588/37192900-ac44b93c-23a2-11e8-8487-92699f0ecb3c.png)
 
 #### Order
 
