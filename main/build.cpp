@@ -29,47 +29,10 @@ rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
 
 int load(const char *str) {
-
-	const char *path = "temp.obj";
-	// Parse and save origin data as a obj file
-	FILE *fp = fopen(path, "w+"); // Create or override file
-	if (fp == NULL) {
-		m_ctx->log(RC_LOG_ERROR, "Cannot create file: %s", path);
-		return -1;
-	}
-
-	while(*str != '\0') {
-		if (*str == '@') {
-			if (fputc('\n', fp) == EOF) {
-				m_ctx->log(RC_LOG_ERROR, "[Failed] Cannot write file: %s", str[0]);
-				fclose(fp);
-				fp = NULL;
-				remove(path);
-				return -1;
-			}
-		} else {
-			if (fputc(*str, fp) == EOF) {
-				m_ctx->log(RC_LOG_ERROR, "[Failed] Cannot write file: %s", str[0]);
-				fclose(fp);
-				fp = NULL;
-				remove(path);
-				return -1;
-			}
-		}
-		str++;
-	}
-
-	fclose(fp);
-	fp = NULL;
-
-	if (!m_geom->load(m_ctx, path)) {
+	if (!m_geom->load(m_ctx, str)) {
 		m_ctx->log(RC_LOG_ERROR, "Cannot read obj: %s", str);
-		remove(path);
 		return -1;
 	}
-
-	remove(path); ///< Clean temp file
-
 	return 0;
 }
 

@@ -136,7 +136,7 @@ bool InputGeom::loadMesh(rcContext* ctx, const std::string& filepath)
 		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
 		return false;
 	}
-	if (!m_mesh->load(filepath))
+	if (!m_mesh->readBuffer(filepath))
 	{
 		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load '%s'", filepath.c_str());
 		return false;
