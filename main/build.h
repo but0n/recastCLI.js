@@ -42,13 +42,6 @@ extern bool m_filterLedgeSpans;
 extern bool m_filterWalkableLowHeightSpans;
 
 ///
-/// @brief 设置目标文件的名称
-/// 
-/// @param str 文件名
-///
-extern void setTargetFile(const char *str);
-
-///
 /// @brief 读取地图
 /// 
 /// @param str 数据
@@ -75,5 +68,13 @@ extern int load(const char *str);
 /// @return int 构建状态
 ///
 extern char *build( float cellSize, float cellHeight, float agentHeight, float agentRadius, float agentMaxClimp, float agentMaxSlope, float regionMinSize, float regionMergeSize, float edgeMaxLen, float edgeMaxError, float vertsPerPoly, float detailSampleDist, float detailSampleMaxError);
+
+///
+/// @brief 导出Navigation mesh 为obj文件
+/// 
+/// @param path 文件名及其路径
+/// @return int 状态
+///
+extern int exportAsObj(const char *path);
 
 #endif

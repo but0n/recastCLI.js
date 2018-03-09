@@ -27,18 +27,10 @@ rcContourSet *m_cset;
 rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
-static std::string targ_filename;
-
-void setTargetFile(const char *str) {
-	targ_filename = str;
-}
 
 int load(const char *str) {
-	if (!targ_filename.length()) {
-		m_ctx->log(RC_LOG_ERROR, "Target name empty!\n");
-		return 0;
-	}
-	const char *path = targ_filename.c_str();
+
+	const char *path = "temp.obj";
 	// Parse and save origin data as a obj file
 	FILE *fp = fopen(path, "w+"); // Create or override file
 	if (fp == NULL) {
@@ -52,6 +44,7 @@ int load(const char *str) {
 				m_ctx->log(RC_LOG_ERROR, "[Failed] Cannot write file: %s", str[0]);
 				fclose(fp);
 				fp = NULL;
+				remove(path);
 				return -1;
 			}
 		} else {
@@ -59,6 +52,7 @@ int load(const char *str) {
 				m_ctx->log(RC_LOG_ERROR, "[Failed] Cannot write file: %s", str[0]);
 				fclose(fp);
 				fp = NULL;
+				remove(path);
 				return -1;
 			}
 		}
@@ -69,13 +63,12 @@ int load(const char *str) {
 	fp = NULL;
 
 	if (!m_geom->load(m_ctx, path)) {
-		m_ctx->log(RC_LOG_ERROR, "Cannot read: %s", str);
+		m_ctx->log(RC_LOG_ERROR, "Cannot read obj: %s", str);
+		remove(path);
 		return -1;
 	}
 
-#ifndef OUTPUT_FILE
-	remove(path);
-#endif
+	remove(path); ///< Clean temp file
 
 	return 0;
 }
@@ -96,11 +89,6 @@ char *build(
 	float 	detailSampleMaxError
 )
 {
-	if (!targ_filename.length()) {
-		m_ctx->log(RC_LOG_ERROR, "Target name empty!\n");
-		return NULL;
-	}
-
 	if(cellSize == 0)
 		cellSize = CFG_CELL_SIZE;
 	if(cellHeight == 0)
@@ -135,7 +123,7 @@ char *build(
 	if (!m_geom->getMesh()) {
 
 		m_ctx->log(RC_LOG_ERROR, "No mesh data, please read buffer first!");
-		return NULL;
+		return "Empty mesh";
 	}
 	// 模型包围盒
 	const float *bmin = m_geom->getNavMeshBoundsMin();
@@ -222,13 +210,13 @@ char *build(
 	{
 		// 如果为 Null, 则 Heap 的空间不够分配 solid 了
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'solid'.");
-		return NULL;
+		return "Build Failed";
 	}
 	// 分配二维网格空间, 每个格子是一个链表
 	if (!rcCreateHeightfield(m_ctx, *m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create solid heightfield.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	// Allocate array that can hold triangle area types.
@@ -239,7 +227,7 @@ char *build(
 	if (!m_triareas)
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'm_triareas' (%d).", ntris);
-		return NULL;
+		return "Build Failed";
 	}
 
 	// Find triangles which are walkable based on their slope and rasterize them.
@@ -253,7 +241,7 @@ char *build(
 	if (!rcRasterizeTriangles(m_ctx, verts, nverts, tris, m_triareas, ntris, *m_solid, m_cfg.walkableClimb))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not rasterize triangles.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	// 是否 Keep Itermediate Results
@@ -298,13 +286,13 @@ char *build(
 	if (!m_chf)
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'chf'.");
-		return NULL;
+		return "Build Failed";
 	}
 	// Builds a compact heightfield representing open space, from a heightfield representing solid space.
 	if (!rcBuildCompactHeightfield(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	// 是否保留原数据
@@ -319,7 +307,7 @@ char *build(
 	if (!rcErodeWalkableArea(m_ctx, m_cfg.walkableRadius, *m_chf))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not erode.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	// (Optional) Mark areas.
@@ -367,14 +355,14 @@ char *build(
 		if (!rcBuildDistanceField(m_ctx, *m_chf))
 		{
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build distance field.");
-			return NULL;
+			return "Build Failed";
 		}
 
 		// Partition the walkable surface into simple regions without holes.
 		if (!rcBuildRegions(m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
 		{
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build watershed regions.");
-			return NULL;
+			return "Build Failed";
 		}
 	}
 	// 单调分割
@@ -386,7 +374,7 @@ char *build(
 		if (!rcBuildRegionsMonotone(m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
 		{
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build monotone regions.");
-			return NULL;
+			return "Build Failed";
 		}
 	}
 	else // SAMPLE_PARTITION_LAYERS
@@ -395,7 +383,7 @@ char *build(
 		if (!rcBuildLayerRegions(m_ctx, *m_chf, 0, m_cfg.minRegionArea))
 		{
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build layer regions.");
-			return NULL;
+			return "Build Failed";
 		}
 	}
 
@@ -409,12 +397,12 @@ char *build(
 	if (!m_cset)
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'cset'.");
-		return NULL;
+		return "Build Failed";
 	}
 	if (!rcBuildContours(m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	//
@@ -427,12 +415,12 @@ char *build(
 	if (!m_pmesh)
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmesh'.");
-		return NULL;
+		return "Build Failed";
 	}
 	if (!rcBuildPolyMesh(m_ctx, *m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not triangulate contours.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	//
@@ -445,13 +433,13 @@ char *build(
 	if (!m_dmesh)
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmdtl'.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	if (!rcBuildPolyMeshDetail(m_ctx, *m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build detail mesh.");
-		return NULL;
+		return "Build Failed";
 	}
 
 	if (!m_keepInterResults)
@@ -468,14 +456,6 @@ char *build(
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
-#ifdef OUTPUT_FILE
-	FILE *fp = fopen(targ_filename.c_str(), "w+");
-	if(fp == NULL) {
-		m_ctx->log(RC_LOG_ERROR, "Cannot write target file!");
-		return "Error!";
-	}
-#endif
-
 
 	char obj[262144];
 	char *p_obj = obj;
@@ -490,13 +470,7 @@ char *build(
             float x = m_pmesh->bmin[0] + m_pmesh->verts[i * 3 + 0] * cs;
             float y = m_pmesh->bmin[1] + m_pmesh->verts[i * 3 + 1] * ch;
             float z = m_pmesh->bmin[2] + m_pmesh->verts[i * 3 + 2] * cs;
-#if defined(OUTPUT_STRING)
             p_obj += sprintf(p_obj, "v %f %f %f ", x, y, z);
-#elif defined(OUTPUT_FILE)
-            p_obj += sprintf(p_obj, "v %f %f %f\n", x, y, z);
-#else
-#error Please select output type
-#endif
         }
         // printf("\r\n");
         // Polygon
@@ -513,26 +487,11 @@ char *build(
                 }
                 else
                 {
-#if defined(OUTPUT_STRING)
                     p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
-#elif defined(OUTPUT_FILE)
-                    p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
-#else
-#error Please select output type!
-#endif
                 }
             }
-#ifdef OUTPUT_FILE
-            p_obj += sprintf(p_obj, "\n");
-#endif
         }
     } while (0);
-
-#ifdef OUTPUT_FILE
-	fputs(obj, fp);
-	fclose(fp);
-	fp = NULL;
-#endif
 
 #ifdef DEBUG
     float m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
@@ -541,4 +500,59 @@ char *build(
 #endif
 
     return obj;
+}
+
+int exportAsObj(const char *path) {
+
+	if (!m_geom->getMesh()) {
+		m_ctx->log(RC_LOG_ERROR, "No mesh data, please read buffer first!");
+		return 1;
+	}
+
+	FILE *fp = fopen(path, "w+");
+	if(fp == NULL) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot write target file!");
+		return 1;
+	}
+
+	char obj[262144];
+	char *p_obj = obj;
+
+	const float cs = m_pmesh->cs;
+	const float ch = m_pmesh->ch;
+	// Vertices
+
+	for (int i = 0; i < m_pmesh->nverts; i++)
+	{
+		float x = m_pmesh->bmin[0] + m_pmesh->verts[i * 3 + 0] * cs;
+		float y = m_pmesh->bmin[1] + m_pmesh->verts[i * 3 + 1] * ch;
+		float z = m_pmesh->bmin[2] + m_pmesh->verts[i * 3 + 2] * cs;
+		p_obj += sprintf(p_obj, "v %f %f %f\n", x, y, z);
+	}
+	// printf("\r\n");
+	// Polygon
+	for (int i = 0; i < m_pmesh->npolys; i++)
+	{
+		const unsigned short *poly = &m_pmesh->polys[i * 2 * m_pmesh->nvp];
+		p_obj += sprintf(p_obj, "f ");
+		for (int v = 0; v < m_pmesh->nvp; v++)
+		{
+			if (poly[v] == RC_MESH_NULL_IDX)
+			{
+				// 如果当前顶点为空
+				break;
+			}
+			else
+			{
+				p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
+			}
+		}
+		p_obj += sprintf(p_obj, "\n");
+	}
+
+	fputs(obj, fp);
+	fclose(fp);
+	fp = NULL;
+
+	return 0;
 }

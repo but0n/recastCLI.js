@@ -98,17 +98,17 @@ namespace demo {
         load(str.c_str());
     }
 
-    void setTarget(const FunctionCallbackInfo<Value>& args) {
+    void exportAsOBJ(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
         v8::String::Utf8Value param1(args[0]->ToString());
         std::string str = std::string(*param1);
-        setTargetFile(str.c_str());
+        exportAsObj(str.c_str());
     }
 
     void init(Local<Object> exports) {
         NODE_SET_METHOD(exports, "build", buildNavmesh);
         NODE_SET_METHOD(exports, "load", loadBuff);
-        NODE_SET_METHOD(exports, "setTarget", setTarget);
+        NODE_SET_METHOD(exports, "save", exportAsOBJ);
     }
 
     NODE_MODULE(NODE_GYP_MODULE_NAME, init)
