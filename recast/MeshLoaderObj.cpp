@@ -285,7 +285,7 @@ static int parseFaces(const char *str, int *pdata) {
 				sprintf(data, "%s%c", data, a);
 				s++;
 			}
-			*pdata++ = atol(data);
+			*pdata++ = atol(data) - 1;
 		} else {
 			s++; // seems like c++ doesn't support *s++
 		}
