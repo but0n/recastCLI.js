@@ -13,12 +13,6 @@ A command line tools to build navigation mesh for game, which means you can auto
 $ node-gyp rebuild
 ```
 
-## Build option
-
- - define OUTPUT_FILE
- - define OUTPUT_STRING
-
-
 ## Usage
 
 ```js
