@@ -5,21 +5,21 @@ A command line tools to build navigation mesh for game, which means you can auto
 
 > Based on [recastnavigation](https://github.com/recastnavigation/recastnavigation) under ZLib license
 
-## Nodejs addon
+# Nodejs addon
 
-### Building
+## Building
 
 ```shell
 $ node-gyp rebuild
 ```
 
-### Build option
+## Build option
 
  - define OUTPUT_FILE
  - define OUTPUT_STRING
 
 
-### Usage
+## Usage
 
 ```js
 const c = require('./build/Release/RecastCLI');
@@ -37,13 +37,13 @@ c.save("exp.obj");
 ![](https://user-images.githubusercontent.com/7625588/37192733-0c8cb8a4-23a2-11e8-87e1-dc84d8ec5ffc.png)
 
 ----
-## Command line tools
+# Command line tools
 
-### Building
+## Building
 
 ![](https://user-images.githubusercontent.com/7625588/36931376-1824eb9e-1eef-11e8-84f6-02b93cfce723.png)
 
-### Usage
+## Usage
 
 ```shell
 $ ./RecastCLI nav_test.obj 0 0 0 0 0 0 0 0 0 0 0 0 0 > navmesh.obj
@@ -52,7 +52,7 @@ $ ./RecastCLI nav_test.obj 0 0 0 0 0 0 0 0 0 0 0 0 0 > navmesh.obj
 Toggle with macro `#define DEBUG`
 ![](https://user-images.githubusercontent.com/7625588/37192900-ac44b93c-23a2-11e8-8487-92699f0ecb3c.png)
 
-#### Order
+### Order
 
  - cellSize
  - cellHeight
