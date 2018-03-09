@@ -42,7 +42,7 @@ c.save("exp.obj");
 $ ./RecastCLI nav_test.obj 0 0 0 0 0 0 0 0 0 0 0 0 0 > navmesh.obj
 ```
  - Running at debug mode
-Toggle with macro `#define DEBUG`
+ > Toggle with macro `#define DEBUG`
 ![](https://user-images.githubusercontent.com/7625588/37192900-ac44b93c-23a2-11e8-8487-92699f0ecb3c.png)
 
 ### Order
