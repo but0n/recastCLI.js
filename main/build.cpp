@@ -4,9 +4,9 @@
 #include "build.h"
 #include "../recast/InputGeom.h"
 #include "../recast/MeshLoaderObj.h"
+#include <string.h>
 
 // #define DEBUG
-#define OUTPUT_STRING
 
 rcConfig m_cfg;
 class rcContext *m_ctx = new rcContext;
@@ -27,6 +27,7 @@ rcContourSet *m_cset;
 rcPolyMesh *m_pmesh;		// Navigation mesh 数据
 rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
+static char obj[262144];
 
 int load(const char *str) {
 	if (!m_geom->load(m_ctx, str)) {
@@ -420,7 +421,6 @@ char *build(
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
 
-	char obj[262144];
 	char *p_obj = obj;
 
     do {
@@ -455,6 +455,7 @@ char *build(
             }
         }
     } while (0);
+	*p_obj = '\0';
 
 #ifdef DEBUG
     float m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
@@ -478,8 +479,8 @@ int exportAsObj(const char *path) {
 		return 1;
 	}
 
-	char obj[262144];
-	char *p_obj = obj;
+	char buf[262144];
+	char *p_obj = buf;
 
 	const float cs = m_pmesh->cs;
 	const float ch = m_pmesh->ch;
@@ -513,7 +514,7 @@ int exportAsObj(const char *path) {
 		p_obj += sprintf(p_obj, "\n");
 	}
 
-	fputs(obj, fp);
+	fputs(buf, fp);
 	fclose(fp);
 	fp = NULL;
 
