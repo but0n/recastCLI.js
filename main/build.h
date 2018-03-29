@@ -43,7 +43,7 @@ extern bool m_filterWalkableLowHeightSpans;
 
 ///
 /// @brief 读取地图
-/// 
+///
 /// @param str 数据
 /// @return int 读取状态
 ///
@@ -51,7 +51,6 @@ extern int load(const char *str);
 
 ///
 /// @brief 构建 Navigation mesh
-/// @param filename 文件名, 相对路径
 /// @param cellSize 网格长度, 用来体素化
 /// @param cellHeight 网格高度, 体素高度
 /// @param agentHeight 角色高度
@@ -71,7 +70,7 @@ extern char *build( float cellSize, float cellHeight, float agentHeight, float a
 
 ///
 /// @brief 导出Navigation mesh 为obj文件
-/// 
+///
 /// @param path 文件名及其路径
 /// @return int 状态
 ///
