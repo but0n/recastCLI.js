@@ -433,7 +433,7 @@ char *build(
             float x = m_pmesh->bmin[0] + m_pmesh->verts[i * 3 + 0] * cs;
             float y = m_pmesh->bmin[1] + m_pmesh->verts[i * 3 + 1] * ch;
             float z = m_pmesh->bmin[2] + m_pmesh->verts[i * 3 + 2] * cs;
-            p_obj += sprintf(p_obj, "v %f %f %f ", x, y, z);
+            p_obj += sprintf(p_obj, "v %f %f %f@", x, y, z);
         }
 		p_obj += sprintf(p_obj, "@");
         // Polygon
@@ -450,9 +450,10 @@ char *build(
                 }
                 else
                 {
-                    p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
+                    p_obj += sprintf(p_obj, "%d", poly[v] + 1);
                 }
             }
+			p_obj += sprintf(p_obj, "@");
         }
     } while (0);
 	*p_obj = '\0';
