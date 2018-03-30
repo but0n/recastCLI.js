@@ -435,7 +435,7 @@ char *build(
             float z = m_pmesh->bmin[2] + m_pmesh->verts[i * 3 + 2] * cs;
             p_obj += sprintf(p_obj, "v %f %f %f ", x, y, z);
         }
-        // printf("\r\n");
+		p_obj += sprintf(p_obj, "@");
         // Polygon
         for (int i = 0; i < m_pmesh->npolys; i++)
         {
