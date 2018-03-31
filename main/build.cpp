@@ -84,6 +84,9 @@ char *build(
 	if(detailSampleMaxError == 0)
 		detailSampleMaxError = CFG_DETAIL_SAMPLE_MAX_ERROR;
 
+	m_ctx->log(RC_LOG_PROGRESS, "Max slope is %f", agentMaxSlope);
+
+
 	if (!m_geom->getMesh()) {
 
 		m_ctx->log(RC_LOG_ERROR, "No mesh data, please read buffer first!");
@@ -120,7 +123,8 @@ char *build(
 	m_cfg.walkableHeight = (int)ceilf(agentHeight / m_cfg.ch);
 	m_cfg.walkableRadius = (int)ceilf(agentRadius / m_cfg.cs);
 	m_cfg.walkableClimb = (int)floorf(agentMaxClimp / m_cfg.ch);
-	m_cfg.walkableSlopeAngle = agentMaxSlope;
+	m_cfg.walkableSlopeAngle = (float)agentMaxSlope;
+
 
 	// Polygonization
 	m_cfg.maxEdgeLen = (int)(edgeMaxLen / m_cfg.cs);
