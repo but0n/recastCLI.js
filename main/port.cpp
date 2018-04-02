@@ -71,6 +71,8 @@ namespace demo {
 
         if(c_detailSampleMaxError != c_detailSampleMaxError)
             c_detailSampleMaxError = 0;
+
+        printf("[js]\tMax slope is %f\n", c_agentMaxSlope);
         char *result;
         result = build(
             c_cellSize,
