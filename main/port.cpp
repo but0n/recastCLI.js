@@ -18,19 +18,19 @@ namespace demo {
     void buildNavmesh(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
 
-        float c_cellSize = Local<v8::Number>::Cast(args[1])->NumberValue();
-        float c_cellHeight = Local<v8::Number>::Cast(args[2])->NumberValue();
-        float c_agentHeight = Local<v8::Number>::Cast(args[3])->NumberValue();
-        float c_agentRadius = Local<v8::Number>::Cast(args[4])->NumberValue();
-        float c_agentMaxClimp = Local<v8::Number>::Cast(args[5])->NumberValue();
-        float c_agentMaxSlope = Local<v8::Number>::Cast(args[6])->NumberValue();
-        float c_regionMinSize = Local<v8::Number>::Cast(args[7])->NumberValue();
-        float c_regionMergeSize = Local<v8::Number>::Cast(args[8])->NumberValue();
-        float c_edgeMaxLen = Local<v8::Number>::Cast(args[9])->NumberValue();
-        float c_edgeMaxError = Local<v8::Number>::Cast(args[10])->NumberValue();
-        float c_vertsPerPoly = Local<v8::Number>::Cast(args[11])->NumberValue();
-        float c_detailSampleDist = Local<v8::Number>::Cast(args[12])->NumberValue();
-        float c_detailSampleMaxError = Local<v8::Number>::Cast(args[13])->NumberValue();
+        float c_cellSize = Local<v8::Number>::Cast(args[0])->NumberValue();
+        float c_cellHeight = Local<v8::Number>::Cast(args[1])->NumberValue();
+        float c_agentHeight = Local<v8::Number>::Cast(args[2])->NumberValue();
+        float c_agentRadius = Local<v8::Number>::Cast(args[3])->NumberValue();
+        float c_agentMaxClimp = Local<v8::Number>::Cast(args[4])->NumberValue();
+        float c_agentMaxSlope = Local<v8::Number>::Cast(args[5])->NumberValue();
+        float c_regionMinSize = Local<v8::Number>::Cast(args[6])->NumberValue();
+        float c_regionMergeSize = Local<v8::Number>::Cast(args[7])->NumberValue();
+        float c_edgeMaxLen = Local<v8::Number>::Cast(args[8])->NumberValue();
+        float c_edgeMaxError = Local<v8::Number>::Cast(args[9])->NumberValue();
+        float c_vertsPerPoly = Local<v8::Number>::Cast(args[10])->NumberValue();
+        float c_detailSampleDist = Local<v8::Number>::Cast(args[11])->NumberValue();
+        float c_detailSampleMaxError = Local<v8::Number>::Cast(args[12])->NumberValue();
 
         // if missing arguments
         if(c_cellSize != c_cellSize)
