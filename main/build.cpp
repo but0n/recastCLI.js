@@ -84,9 +84,6 @@ char *build(
 	if(detailSampleMaxError == 0)
 		detailSampleMaxError = CFG_DETAIL_SAMPLE_MAX_ERROR;
 
-	m_ctx->log(RC_LOG_PROGRESS, "Max slope is %f", agentMaxSlope);
-
-
 	if (!m_geom->getMesh()) {
 
 		m_ctx->log(RC_LOG_ERROR, "No mesh data, please read buffer first!");
