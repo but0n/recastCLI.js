@@ -76,7 +76,7 @@ class InputGeom
 	float m_meshBMin[3], m_meshBMax[3];
 	BuildSettings m_buildSettings;
 	bool m_hasBuildSettings;
-	
+
 	/// @name Off-Mesh connections.
 	///@{
 	static const int MAX_OFFMESH_CONNECTIONS = 256;
@@ -95,17 +95,17 @@ class InputGeom
 	ConvexVolume m_volumes[MAX_VOLUMES];
 	int m_volumeCount;
 	///@}
-	
-	bool loadMesh(class rcContext* ctx, const std::string& filepath);
+
+	bool loadMesh(rcContext* ctx, const float *v, const int vl, const int *f, const int fl);
 	bool loadGeomSet(class rcContext* ctx, const std::string& filepath);
 public:
 	InputGeom();
 	~InputGeom();
-	
-	
-	bool load(class rcContext* ctx, const std::string& filepath);
+
+
+	bool load(class rcContext* ctx, const float *v, const int vl, const int *f, const int fl);
 	bool saveGeomSet(const BuildSettings* settings);
-	
+
 	/// Method to return static mesh data.
 	const rcMeshLoaderObj* getMesh() const { return m_mesh; }
 	const float* getMeshBoundsMin() const { return m_meshBMin; }
@@ -140,7 +140,7 @@ public:
 	void deleteConvexVolume(int i);
 	void drawConvexVolumes(struct duDebugDraw* dd, bool hilight = false);
 	///@}
-	
+
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
 	InputGeom(const InputGeom&);

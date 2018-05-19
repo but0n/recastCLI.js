@@ -26,9 +26,9 @@ class rcMeshLoaderObj
 public:
 	rcMeshLoaderObj();
 	~rcMeshLoaderObj();
-	
+
 	bool load(const std::string& fileName);
-	bool readBuffer(const std::string& objBuffer);
+	bool readBuffer(const float *verts, const long v_length, const int *faces, const long f_length);
 
 	const float* getVerts() const { return m_verts; }
 	const float* getNormals() const { return m_normals; }
@@ -41,12 +41,12 @@ private:
 	// Explicitly disabled copy constructor and copy assignment operator.
 	rcMeshLoaderObj(const rcMeshLoaderObj&);
 	rcMeshLoaderObj& operator=(const rcMeshLoaderObj&);
-	
+
 	void addVertex(float x, float y, float z, int& cap);
 	void addTriangle(int a, int b, int c, int& cap);
-	
+
     std::string m_filename;
-	float m_scale;	
+	float m_scale;
 	float* m_verts;
 	int* m_tris;
 	float* m_normals;

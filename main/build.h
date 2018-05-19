@@ -47,7 +47,7 @@ extern bool m_filterWalkableLowHeightSpans;
 /// @param str 数据
 /// @return int 读取状态
 ///
-extern int load(const char *str);
+extern int load(const float *v, const int vl, const int *f, const int fl);
 
 ///
 /// @brief 构建 Navigation mesh

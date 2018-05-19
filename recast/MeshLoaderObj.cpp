@@ -39,7 +39,7 @@ rcMeshLoaderObj::~rcMeshLoaderObj()
 	delete [] m_normals;
 	delete [] m_tris;
 }
-		
+
 void rcMeshLoaderObj::addVertex(float x, float y, float z, int& cap)
 {
 	if (m_vertCount+1 > cap)
@@ -181,7 +181,7 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 	int nv;
 	int vcap = 0;
 	int tcap = 0;
-	
+
 	while (src < srcEnd)
 	{
 		// Parse one row
@@ -239,105 +239,22 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 			n[2] *= d;
 		}
 	}
-	
+
 	m_filename = filename;
 	return true;
 }
 
 // Unit test see #a5bff6b
-static long parseVerts(const char *str, float *pdata) {
-	if(!str || !pdata)
-		return 0;
-	char *s = (char *)str;
-	while(*s != '@') {	// Split line with line end flag '@'
-		if(*s == ' ') { // Space: data entry
-			s++; // Skip current [space]
-			char data[20]; ///< declare some space to store verts data
-			memset(data, 0, sizeof(data));
-			while(*s != '@' && *s != ' ') {
-				char a = s[0];
-				sprintf(data, "%s%c", data, a);
-				s++;
-			}
-			*pdata++ = atof(data);
-		} else {
-			s++; // seems like c++ doesn't support *s++
-		}
-	}
-	// Update pointer
-	// return current address of data stream
-	long r = s - str;
-	// str = s;
-	return r;
-}
 
-static int parseFaces(const char *str, int *pdata) {
-	if(!str || !pdata)
-		return 0;
-	char *s = (char *)str;
-	while(*s != '@') {	// Split line with line end flag '@'
-		if(*s == ' ') { // Space: data entry
-			s++; // Skip current [space]
-			char data[20]; ///< declare some space to store verts data
-			memset(data, 0, sizeof(data));
-			while(*s != '@' && *s != ' ') {
-				char a = s[0];
-				sprintf(data, "%s%c", data, a);
-				s++;
-			}
-			*pdata++ = atol(data) - 1;
-		} else {
-			s++; // seems like c++ doesn't support *s++
-		}
-	}
-	// Update pointer
-	// return current address of data stream
-	int r = s - str;
-	// str = s;
-	return r;
-}
-
-bool rcMeshLoaderObj::readBuffer(const std::string& objBuffer)
+bool rcMeshLoaderObj::readBuffer(const float *verts, const long v_length, const int *faces, const long f_length)
 {
-	const char *buf = objBuffer.c_str();
-	const long bufSize = objBuffer.length();
-
-	int face[32];
-	float x,y,z;
-	int a,b,c;
 	int vcap = 0;
 	int tcap = 0;
-
-	bool isVert = false;
-	for(long i = 0; i < bufSize; i++, buf++) {
-		// printf("\tT:%d : %c\n", i, buf[0]);
-		float v[3];
-		int f[3];
-		switch(*buf) {
-			case 'v':
-				if(buf[1]!=' ')
-					break;
-				/// Parse and updata pointer
-				sscanf(buf+1, "%f %f %f", &x, &y, &z);
-				addVertex(x, y, z, vcap);
-				// printf("\t[Vert Result %d]: x: %f, y: %f, z: %f\n", nv, x, y, z);
-				break;
-
-			case 'f':
-				if(buf[1]!=' ')
-					break;
-				/// Parse and updata pointer
-				parseFaces(buf, f);
-				a = f[0];
-				b = f[1];
-				c = f[2];
-				addTriangle(a, b, c, tcap);
-				// printf("[Face Result]: x: %d, y: %d, z: %d\n", a, b, c);
-				break;
-			default:
-			case ' ':
-				break;
-		}
+	for(int i = 0; i < v_length; i+=3) {
+		addVertex(verts[i], verts[i+1], verts[i+2], vcap);
+	}
+	for(int i = 0; i < f_length; i+=3) {
+		addTriangle(faces[i]-1, faces[i+1]-1, faces[i+2]-1, tcap);
 	}
 	return true;
 }

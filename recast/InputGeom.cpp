@@ -118,7 +118,7 @@ InputGeom::~InputGeom()
 	delete m_mesh;
 }
 
-bool InputGeom::loadMesh(rcContext* ctx, const std::string& filepath)
+bool InputGeom::loadMesh(rcContext* ctx, const float *v, const int vl, const int *f, const int fl)
 {
 	if (m_mesh)
 	{
@@ -136,9 +136,9 @@ bool InputGeom::loadMesh(rcContext* ctx, const std::string& filepath)
 		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
 		return false;
 	}
-	if (!m_mesh->load(filepath))
+	if (!m_mesh->readBuffer(v, vl, f, fl))
 	{
-		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load '%s'", filepath.c_str());
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load scenes");
 		return false;
 	}
 
@@ -220,11 +220,11 @@ bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
 				name++;
 			if (*name)
 			{
-				if (!loadMesh(ctx, name))
-				{
-					delete [] buf;
-					return false;
-				}
+				// if (!loadMesh(ctx, name))
+				// {
+				// 	delete [] buf;
+				// 	return false;
+				// }
 			}
 		}
 		else if (row[0] == 'c')
@@ -293,19 +293,19 @@ bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
 	return true;
 }
 
-bool InputGeom::load(rcContext* ctx, const std::string& filepath)
+bool InputGeom::load(rcContext* ctx, const float *v, const int vl, const int *f, const int fl)
 {
-	size_t extensionPos = filepath.find_last_of('.');
-	if (extensionPos == std::string::npos)
-		return false;
+	// size_t extensionPos = filepath.find_last_of('.');
+	// if (extensionPos == std::string::npos)
+	// 	return false;
 
-	std::string extension = filepath.substr(extensionPos);
-	std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
+	// std::string extension = filepath.substr(extensionPos);
+	// std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
 
 	// if (extension == ".gset")
 	// 	return loadGeomSet(ctx, filepath);
 	// if (extension == ".obj")
-	return loadMesh(ctx, filepath);
+	return loadMesh(ctx, v, vl, f, fl);
 
 	// return false;
 }

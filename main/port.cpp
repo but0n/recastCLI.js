@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <node.h>
+#include <nan.h>
 #include "../recast/Recast.h"
 #include "../recast/InputGeom.h"
 #include "../recast/MeshLoaderObj.h"
@@ -92,11 +93,19 @@ namespace demo {
         args.GetReturnValue().Set(n_mesh);
     }
 
-    void loadBuff(const FunctionCallbackInfo<Value>& args) {
+    void loadArray(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
-        v8::String::Utf8Value param1(args[0]->ToString());
-        std::string str = std::string(*param1);
-        load(str.c_str());
+        Local<v8::Float32Array> v = args[0].As<v8::Float32Array>();
+        Nan::TypedArrayContents<float> verts(v);
+        Local<v8::Int32Array> f = args[1].As<v8::Int32Array>();
+        Nan::TypedArrayContents<int> faces(f);
+        // printf("Array length:\t%d\n", (int)(v->Length()));
+        // printf("Array2 length:\t%d\n", (int)(f->Length()));
+        // printf("%f\n", (*verts)[0]);
+        // printf("%f\n", (*verts)[1]);
+        // printf("%f\n\n", (*verts)[2]);
+        // printf("%d\n", **faces);
+        load(*verts, v->Length(), *faces, f->Length());
     }
 
     void exportAsOBJ(const FunctionCallbackInfo<Value>& args) {
@@ -108,7 +117,7 @@ namespace demo {
 
     void init(Local<Object> exports) {
         NODE_SET_METHOD(exports, "build", buildNavmesh);
-        NODE_SET_METHOD(exports, "load", loadBuff);
+        NODE_SET_METHOD(exports, "load", loadArray);
         NODE_SET_METHOD(exports, "save", exportAsOBJ);
     }
 
