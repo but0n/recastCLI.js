@@ -22,7 +22,7 @@ recast.loadFile('myfile.obj');
 recast.loadContent('v -0.5 0 0.5@v -0.5 0 -0.5@...f 27 26 25@f 28 26 27@');
 recast.loadArray(new Float32Array(position), new Int32Array(index))
 
-recast.build(); // build with default options, return string
+recast.build(cellSize, cellHeight, agentHeight, agentRadius, agentMaxClimp, agentMaxSlope); // return string
 
 recast.save("navmesh.obj");
 ```
