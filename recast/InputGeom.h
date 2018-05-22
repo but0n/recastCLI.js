@@ -105,6 +105,7 @@ public:
 
 	bool load(class rcContext* ctx, const std::string& filepath);
 	bool loadArray(class rcContext* ctx, const float *v, const int vl, const int *f, const int fl);
+	bool loadContent(class rcContext* ctx, const std::string& content);
 	bool saveGeomSet(const BuildSettings* settings);
 
 	/// Method to return static mesh data.

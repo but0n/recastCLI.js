@@ -109,6 +109,13 @@ namespace demo {
         recast_loadArray(*verts, v->Length(), *faces, f->Length());
     }
 
+    void loadContent(const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        v8::String::Utf8Value param1(args[0]->ToString());
+        std::string str = std::string(*param1);
+        recast_loadContent(str.c_str());
+    }
+
     void exportAsOBJ(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
         v8::String::Utf8Value param1(args[0]->ToString());
@@ -120,6 +127,7 @@ namespace demo {
         NODE_SET_METHOD(exports, "build", buildNavmesh);
         NODE_SET_METHOD(exports, "loadFile", loadFile);
         NODE_SET_METHOD(exports, "loadArray", loadArray);
+        NODE_SET_METHOD(exports, "loadContent", loadContent);
         NODE_SET_METHOD(exports, "save", exportAsOBJ);
     }
 

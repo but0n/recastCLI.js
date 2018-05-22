@@ -245,6 +245,70 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 }
 
 // Unit test see #a5bff6b
+static int parseFaces(const char *str, int *pdata) {
+	if(!str || !pdata)
+		return 0;
+	char *s = (char *)str;
+	while(*s != '@') {	// Split line with line end flag '@'
+		if(*s == ' ') { // Space: data entry
+			s++; // Skip current [space]
+			char data[20]; ///< declare some space to store verts data
+			memset(data, 0, sizeof(data));
+			while(*s != '@' && *s != ' ') {
+				char a = s[0];
+				sprintf(data, "%s%c", data, a);
+				s++;
+			}
+			*pdata++ = atol(data) - 1;
+		} else {
+			s++; // seems like c++ doesn't support *s++
+		}
+	}
+	// Update pointer
+	// return current address of data stream
+	int r = s - str;
+	// str = s;
+	return r;
+}
+
+bool rcMeshLoaderObj::readString(const std::string& objBuffer)
+{
+	const char *buf = objBuffer.c_str();
+	const long bufSize = objBuffer.length();
+
+	float x,y,z;
+	int a,b,c;
+	int vcap = 0;
+	int tcap = 0;
+
+	for(long i = 0; i < bufSize; i++, buf++) {
+		int f[3];
+		switch(*buf) {
+			case 'v':
+				if(buf[1]!=' ')
+					break;
+				/// Parse and updata pointer
+				sscanf(buf+1, "%f %f %f", &x, &y, &z);
+				addVertex(x, y, z, vcap);
+				break;
+
+			case 'f':
+				if(buf[1]!=' ')
+					break;
+				/// Parse and updata pointer
+				parseFaces(buf, f);
+				a = f[0];
+				b = f[1];
+				c = f[2];
+				addTriangle(a, b, c, tcap);
+				break;
+			default:
+			case ' ':
+				break;
+		}
+	}
+	return true;
+}
 
 bool rcMeshLoaderObj::readArray(const float *verts, const long v_length, const int *faces, const long f_length)
 {

@@ -45,6 +45,14 @@ int recast_loadArray(const float *v, const int vl, const int *f, const int fl) {
 	return 0;
 }
 
+int recast_loadContent(const char *str) {
+	if (!m_geom->loadContent(m_ctx, str)) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot read obj: %s", str);
+		return -1;
+	}
+	return 0;
+}
+
 char *build(
     float 	cellSize,
     float 	cellHeight,
