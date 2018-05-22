@@ -246,7 +246,7 @@ bool rcMeshLoaderObj::load(const std::string& filename)
 
 // Unit test see #a5bff6b
 
-bool rcMeshLoaderObj::readBuffer(const float *verts, const long v_length, const int *faces, const long f_length)
+bool rcMeshLoaderObj::readArray(const float *verts, const long v_length, const int *faces, const long f_length)
 {
 	int vcap = 0;
 	int tcap = 0;
@@ -254,7 +254,7 @@ bool rcMeshLoaderObj::readBuffer(const float *verts, const long v_length, const 
 		addVertex(verts[i], verts[i+1], verts[i+2], vcap);
 	}
 	for(int i = 0; i < f_length; i+=3) {
-		addTriangle(faces[i]-1, faces[i+1]-1, faces[i+2]-1, tcap);
+		addTriangle(faces[i], faces[i+1], faces[i+2], tcap); // 0-indexed
 	}
 	return true;
 }

@@ -96,14 +96,15 @@ class InputGeom
 	int m_volumeCount;
 	///@}
 
-	bool loadMesh(rcContext* ctx, const float *v, const int vl, const int *f, const int fl);
+	bool loadMesh(class rcContext* ctx, const std::string& filepath);
 	bool loadGeomSet(class rcContext* ctx, const std::string& filepath);
 public:
 	InputGeom();
 	~InputGeom();
 
 
-	bool load(class rcContext* ctx, const float *v, const int vl, const int *f, const int fl);
+	bool load(class rcContext* ctx, const std::string& filepath);
+	bool loadArray(class rcContext* ctx, const float *v, const int vl, const int *f, const int fl);
 	bool saveGeomSet(const BuildSettings* settings);
 
 	/// Method to return static mesh data.

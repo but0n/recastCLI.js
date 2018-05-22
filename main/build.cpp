@@ -29,8 +29,16 @@ rcPolyMeshDetail *m_dmesh;	// Navigation mesh detail 数据
 
 static char obj[262144];
 
-int load(const float *v, const int vl, const int *f, const int fl) {
-	if (!m_geom->load(m_ctx, v, vl, f, fl)) {
+int recast_loadFile(const char *str) {
+	if (!m_geom->load(m_ctx, str)) {
+		m_ctx->log(RC_LOG_ERROR, "Cannot read obj: %s", str);
+		return -1;
+	}
+	return 0;
+}
+
+int recast_loadArray(const float *v, const int vl, const int *f, const int fl) {
+	if (!m_geom->loadArray(m_ctx, v, vl, f, fl)) {
 		m_ctx->log(RC_LOG_ERROR, "Cannot read buffer");
 		return -1;
 	}

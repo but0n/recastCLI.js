@@ -28,7 +28,7 @@ public:
 	~rcMeshLoaderObj();
 
 	bool load(const std::string& fileName);
-	bool readBuffer(const float *verts, const long v_length, const int *faces, const long f_length);
+	bool readArray(const float *verts, const long v_length, const int *faces, const long f_length);
 
 	const float* getVerts() const { return m_verts; }
 	const float* getNormals() const { return m_normals; }

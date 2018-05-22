@@ -118,7 +118,7 @@ InputGeom::~InputGeom()
 	delete m_mesh;
 }
 
-bool InputGeom::loadMesh(rcContext* ctx, const float *v, const int vl, const int *f, const int fl)
+bool InputGeom::loadMesh(rcContext* ctx, const std::string& filepath)
 {
 	if (m_mesh)
 	{
@@ -136,9 +136,9 @@ bool InputGeom::loadMesh(rcContext* ctx, const float *v, const int vl, const int
 		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
 		return false;
 	}
-	if (!m_mesh->readBuffer(v, vl, f, fl))
+	if (!m_mesh->load(filepath))
 	{
-		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load scenes");
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load '%s'", filepath.c_str());
 		return false;
 	}
 
@@ -220,11 +220,11 @@ bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
 				name++;
 			if (*name)
 			{
-				// if (!loadMesh(ctx, name))
-				// {
-				// 	delete [] buf;
-				// 	return false;
-				// }
+				if (!loadMesh(ctx, name))
+				{
+					delete [] buf;
+					return false;
+				}
 			}
 		}
 		else if (row[0] == 'c')
@@ -293,21 +293,62 @@ bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
 	return true;
 }
 
-bool InputGeom::load(rcContext* ctx, const float *v, const int vl, const int *f, const int fl)
+bool InputGeom::load(rcContext* ctx, const std::string& filepath)
 {
-	// size_t extensionPos = filepath.find_last_of('.');
-	// if (extensionPos == std::string::npos)
-	// 	return false;
+	size_t extensionPos = filepath.find_last_of('.');
+	if (extensionPos == std::string::npos)
+		return false;
 
-	// std::string extension = filepath.substr(extensionPos);
-	// std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
+	std::string extension = filepath.substr(extensionPos);
+	std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
 
-	// if (extension == ".gset")
-	// 	return loadGeomSet(ctx, filepath);
-	// if (extension == ".obj")
-	return loadMesh(ctx, v, vl, f, fl);
+	if (extension == ".gset")
+		return loadGeomSet(ctx, filepath);
+	if (extension == ".obj")
+		return loadMesh(ctx, filepath);
 
-	// return false;
+	return false;
+}
+
+bool InputGeom::loadArray(rcContext* ctx, const float *v, const int vl, const int *f, const int fl)
+{
+	if (m_mesh)
+	{
+		delete m_chunkyMesh;
+		m_chunkyMesh = 0;
+		delete m_mesh;
+		m_mesh = 0;
+	}
+	m_offMeshConCount = 0;
+	m_volumeCount = 0;
+
+	m_mesh = new rcMeshLoaderObj;
+	if (!m_mesh)
+	{
+		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
+		return false;
+	}
+	if (!m_mesh->readArray(v, vl, f, fl))
+	{
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load current scenes.");
+		return false;
+	}
+
+	rcCalcBounds(m_mesh->getVerts(), m_mesh->getVertCount(), m_meshBMin, m_meshBMax);
+
+	m_chunkyMesh = new rcChunkyTriMesh;
+	if (!m_chunkyMesh)
+	{
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Out of memory 'm_chunkyMesh'.");
+		return false;
+	}
+	if (!rcCreateChunkyTriMesh(m_mesh->getVerts(), m_mesh->getTris(), m_mesh->getTriCount(), 256, m_chunkyMesh))
+	{
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Failed to build chunky mesh.");
+		return false;
+	}
+
+	return true;
 }
 
 bool InputGeom::saveGeomSet(const BuildSettings* settings)
