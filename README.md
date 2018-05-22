@@ -16,21 +16,21 @@ $ node-gyp rebuild
 ## Usage
 
 ```js
-const c = require('./build/Release/RecastCLI');
+const recast = require('./build/Release/RecastCLI');
 
-c.load(new Float32Array([-0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0, -0.5, -0.05, -0.05, -0.05, -0.05, -0.05, 0.05, 0.05, -0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, 0.05, -0.05, 0.05, -0.05, 0.05, 0.05, 0.05, 0.05, 0.05, -0.05, -0.05, -0.05, 0.05, -0.05, 0.05, 0.05, 0.05, -0.05, 0.05, 0.05, 0.05, 0.05, -0.05, 0.05, -0.05, -0.05, -0.05, -0.05, 0.05, 0.05, -0.05, 0.05, -0.05, -0.05, 0.05, -0.05, -0.05, 0.05, -0.05, 0.05, 0.05, 0.05, -0.05, 0.05, 0.05, 0.05, -0.05, -0.05, 0.05, -0.05, -0.05, -0.05, -0.05, 0.05, 0.05, -0.05, 0.05, -0.05]), new Int32Array([3, 2, 1, 4, 2, 3, 7, 6, 5, 8, 6, 7, 11, 10, 9, 12, 10, 11, 15, 14, 13, 16, 14, 15, 19, 18, 17, 20, 18, 19, 23, 22, 21, 24, 22, 23, 27, 26, 25, 28, 26, 27]))
+recast.loadFile('myfile.obj');
+recast.loadContent('v -0.5 0 0.5@v -0.5 0 -0.5@...f 27 26 25@f 28 26 27@');
+recast.loadArray(new Float32Array(position), new Int32Array(index))
 
-c.build(0.001, 0.001, 0.1, 0.1, 10.0); // return string
+recast.build(); // build with default options, return string
 
-c.save("exp.obj");
+recast.save("navmesh.obj");
 ```
-
-![](https://user-images.githubusercontent.com/7625588/37197151-9621d722-23b4-11e8-95b2-f2f2a9b6dccf.png)
 
 ----
 # Command line tools
 
-> @ master branch
+At master branch
 
 ## Building
 
