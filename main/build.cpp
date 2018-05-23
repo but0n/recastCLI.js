@@ -467,7 +467,7 @@ char *build(
                 }
                 else
                 {
-                    p_obj += sprintf(p_obj, "%d ", poly[v] + 1);
+                    p_obj += sprintf(p_obj, "%d ", poly[v]);
                 }
             }
 			p_obj += sprintf(p_obj, "@");
