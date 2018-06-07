@@ -1,3 +1,4 @@
+#include <cstring>
 #include "stdio.h"
 #include "Recast.h"
 #include "math.h"

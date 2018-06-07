@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Recast.h"
 #include "build.h"
+#include <cstring>
 
 const char *c_filename;
 float 	c_cellSize;
