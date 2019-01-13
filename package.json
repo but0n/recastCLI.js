@@ -1,0 +1,24 @@
+{
+  "name": "recastCLI.js",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/but0n/recastCLI.js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/but0n/recastCLI.js/issues"
+  },
+  "homepage": "https://github.com/but0n/recastCLI.js#readme",
+  "devDependencies": {
+    "graceful-fs": "^4.1.15",
+    "nan": "^2.12.1",
+    "node-gyp": "^3.8.0"
+  }
+}
