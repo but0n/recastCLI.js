@@ -1,2 +1,4 @@
 .vscode/*
-.idea/*
+.idea/*build/
+node_modules
+build
