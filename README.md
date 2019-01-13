@@ -7,10 +7,10 @@ A command line tools to build navigation mesh for game, which means you can auto
 
 # Nodejs addon
 
-## Building
+## Building (`nodejs` branch)
 
 ```shell
-$ node-gyp rebuild
+$ npm install && npm run build
 ```
 
 ## Usage
