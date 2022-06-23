@@ -60,3 +60,6 @@ $ ./RecastCLI nav_test.obj 0 0 0 0 0 0 0 0 0 0 0 0 0 > navmesh.obj
  - vertsPerPoly
  - detailSampleDist
  - detailSampleMaxErro
+
+
+***Powered by cafe team***
